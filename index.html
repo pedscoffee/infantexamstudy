@@ -1045,10 +1045,6 @@ body.edit-mode .edit-banner { display: block; }
         <div class="tutor-card-title">Quiz</div>
         <p id="tutor-question-text" class="tutor-question-text">Press “New question” to begin.</p>
         <p id="tutor-question-source" class="tutor-question-source"></p>
-        <div class="tutor-button-row">
-          <button class="sb-btn" id="tutor-new-question" type="button">New question</button>
-          <button class="sb-btn" id="tutor-reveal-answer" type="button">Reveal answer</button>
-        </div>
         <div class="tutor-answer">
           <div class="tutor-answer-prefix">Chart answer</div>
           <div id="tutor-answer-content" data-visible="false">
@@ -1057,8 +1053,12 @@ body.edit-mode .edit-banner { display: block; }
           </div>
         </div>
         <div class="tutor-feedback" id="tutor-feedback">
+          <div class="tutor-button-row">
+            <button class="sb-btn" id="tutor-new-question" type="button">Next question</button>
+            <button class="sb-btn" id="tutor-reveal-answer" type="button">Reveal answer</button>
+          </div>
           <span class="tutor-feedback-label">Status</span>
-          <p id="tutor-feedback-text">Use “New question” or toggle the priority filter to refresh the prompt.</p>
+          <p id="tutor-feedback-text">Use the buttons above to advance quizzes and reveal the chart answer.</p>
         </div>
       </div>
       <div class="tutor-card">
