@@ -2252,7 +2252,10 @@ function revealSection() {
   if (!currentRow) return;
   const sid = currentRow.getAttribute('data-sid');
   studyOrder.filter(r => r.getAttribute('data-sid') === sid)
-    .forEach(r => r.classList.add('s-revealed'));
+    .forEach(r => {
+      r.classList.add('s-revealed');
+      r.querySelectorAll('td[data-cell="mgmt"], td[data-cell="pearl"]').forEach(cell => cell.classList.add('cell-revealed'));
+    });
 }
 
 function toggleShuffle() {
