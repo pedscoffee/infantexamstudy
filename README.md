@@ -1,5 +1,7 @@
 # Newborn Exam Quick Reference
 
+[Infant Exam Study Guide](https://pedscoffee.github.io/infantexamstudy/)
+
 This single-page chart is a searchable, editable quick reference for the newborn physical exam. All data lives in `index.html`; styles, markup, and the data array are bundled together so you can open the file directly in a browser.
 
 ## Key features
