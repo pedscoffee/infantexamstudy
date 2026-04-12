@@ -743,6 +743,21 @@ body.edit-mode .edit-banner { display: block; }
 .tutor-shell {
   margin: 10px 20px 20px;
 }
+.tutor-panel-toggle {
+  border: 1px solid rgba(99, 102, 241, 0.45);
+  background: #1f2c57;
+  color: white;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.tutor-panel-toggle:hover {
+  background: #2f3c7f;
+}
 .tutor-panel {
   margin: 0;
   padding: 18px 22px;
@@ -750,6 +765,9 @@ body.edit-mode .edit-banner { display: block; }
   border: 1px solid rgba(99, 102, 241, 0.35);
   background: linear-gradient(180deg, rgba(14, 45, 74, 0.08), rgba(240, 247, 255, 0.9));
   box-shadow: 0 15px 30px rgba(15, 45, 74, 0.15);
+}
+.tutor-panel[data-open="false"] {
+  display: none;
 }
 .tutor-panel-header {
   display: flex;
@@ -768,6 +786,12 @@ body.edit-mode .edit-banner { display: block; }
   font-size: 12px;
   color: var(--muted);
   line-height: 1.4;
+}
+.tutor-panel-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 .tutor-status-line {
   display: flex;
@@ -792,30 +816,6 @@ body.edit-mode .edit-banner { display: block; }
   background: rgba(34, 197, 94, 0.18);
   color: #166534;
 }
-.tutor-panel-grid {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-.tutor-panel[data-open="false"] {
-  display: none;
-}
-.tutor-panel-toggle {
-  border: 1px solid rgba(99, 102, 241, 0.45);
-  background: #1f2c57;
-  color: white;
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 8px 16px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: background 0.15s;
-  margin-top: 8px;
-}
-.tutor-panel-toggle:hover {
-  background: #2f3c7f;
-}
 .tutor-panel-close {
   border: none;
   background: rgba(255, 255, 255, 0.2);
@@ -829,16 +829,18 @@ body.edit-mode .edit-banner { display: block; }
 .tutor-panel-close:hover {
   background: rgba(255, 255, 255, 0.4);
 }
+.tutor-panel-grid {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
 .tutor-card {
   background: white;
   border-radius: 12px;
   padding: 14px 16px;
-  flex: 1 1 280px;
-  min-width: 260px;
+  flex: 1 1 320px;
+  min-width: 280px;
   box-shadow: 0 6px 20px rgba(15, 45, 74, 0.08);
-}
-.tutor-card--config {
-  max-width: 330px;
 }
 .tutor-card-title {
   font-size: 12px;
@@ -847,32 +849,6 @@ body.edit-mode .edit-banner { display: block; }
   letter-spacing: 1px;
   color: var(--navy-mid);
   margin-bottom: 10px;
-}
-.tutor-config-row {
-  margin-bottom: 12px;
-  font-size: 13px;
-}
-.tutor-config-row label {
-  display: block;
-  font-size: 12px;
-  margin-bottom: 4px;
-  color: var(--muted);
-}
-.tutor-config-row input,
-.tutor-config-row select {
-  width: 100%;
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid #c6cdd6;
-  font-size: 13px;
-  font-family: 'IBM Plex Mono', monospace;
-  color: var(--text);
-  background: #f5f7fb;
-}
-.tutor-config-note {
-  font-size: 11px;
-  color: var(--muted);
-  line-height: 1.4;
 }
 .tutor-question-text {
   font-size: 14px;
@@ -884,19 +860,6 @@ body.edit-mode .edit-banner { display: block; }
   font-size: 11px;
   color: var(--muted);
   margin-bottom: 10px;
-}
-#tutor-response {
-  width: 100%;
-  min-height: 90px;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #d4dbe7;
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-size: 13px;
-  color: var(--text);
-  resize: vertical;
-  margin-bottom: 10px;
-  background: #f9fbff;
 }
 .tutor-button-row {
   display: flex;
@@ -985,6 +948,18 @@ body.edit-mode .edit-banner { display: block; }
 .tutor-critical-indicator[data-critical="true"] {
   color: var(--red);
 }
+.tutor-config-row {
+  margin-top: 12px;
+  font-size: 13px;
+}
+.tutor-config-row label {
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
 </style>
 </head>
 <body>
@@ -1032,69 +1007,59 @@ body.edit-mode .edit-banner { display: block; }
 <div class="edit-banner">Edit mode — click any cell to edit text · Row controls appear in the Finding column · Changes auto-save to your browser · Use Export File to bake edits into a new HTML file</div>
 <div class="study-banner">Study Mode — click any blurred cell to reveal · Use the bar below to navigate findings · Press Esc to exit</div>
 
-<div class="tutor-panel" id="tutor-panel">
-  <div class="tutor-panel-header">
-    <div>
-      <h2>Tutor Coach</h2>
-      <p>Quiz yourself using the chart as the source of truth. Load WebLLM with the Gemma model locally so the tutor can score your answers and surface curated resources.</p>
+<div class="tutor-shell">
+  <button id="tutor-panel-toggle" class="tutor-panel-toggle" aria-expanded="false">Show Tutor mode</button>
+  <div class="tutor-panel" id="tutor-panel" data-open="false">
+    <div class="tutor-panel-header">
+      <div>
+        <h2>Tutor Coach</h2>
+        <p>Challenge yourself with chart-based questions and reveal the answers when you are ready.</p>
+      </div>
+      <div class="tutor-panel-actions">
+        <div class="tutor-status-line">
+          <span>Mode</span>
+          <span class="tutor-status-pill ready" id="tutor-mode-pill">Active</span>
+        </div>
+        <button id="tutor-panel-close" class="tutor-panel-close" type="button">Hide tutor</button>
+      </div>
     </div>
-    <div class="tutor-status-line">
-      <span>LLM status</span>
-      <span class="tutor-status-pill" id="tutor-llm-status">Detecting…</span>
-    </div>
-  </div>
-  <div class="tutor-panel-grid">
-    <div class="tutor-card tutor-card--config">
-      <div class="tutor-card-title">Model &amp; preferences</div>
-      <div class="tutor-config-row">
-        <label for="tutor-model-select">Model source</label>
-        <select id="tutor-model-select">
-          <option value="auto">Auto-detect WebLLM + Gemma</option>
-          <option value="endpoint">Custom HTTP endpoint</option>
-          <option value="sim">Simulated tutor</option>
-        </select>
-      </div>
-      <div class="tutor-config-row">
-        <label for="tutor-endpoint">HTTP endpoint (POST &lt;prompt&gt;)</label>
-        <input type="url" id="tutor-endpoint" placeholder="http://localhost:8080/v1/generate" />
-      </div>
-      <div class="tutor-config-row">
-        <label>
-          <input type="checkbox" id="tutor-critical-only" /> Focus on high-priority findings
-        </label>
-      </div>
-      <p class="tutor-config-note">
-        Drop in WebLLM + Gemma locally and expose <code>window.gemmaTutor(prompt)</code> (or wire your own endpoint). The chart remains the single source of truth; the LLM just provides coaching feedback.
-      </p>
-    </div>
-    <div class="tutor-card tutor-card--quiz">
-      <div class="tutor-card-title">Quiz</div>
-      <p id="tutor-question-text" class="tutor-question-text">Ready to quiz? Tap “New question”.</p>
-      <p id="tutor-question-source" class="tutor-question-source"></p>
-      <textarea id="tutor-response" placeholder="Type your answer here (optional)"></textarea>
-      <div class="tutor-button-row">
-        <button class="sb-btn" id="tutor-new-question" type="button">New question</button>
-        <button class="sb-btn" id="tutor-reveal-answer" type="button">Reveal answer</button>
-        <button class="sb-btn" id="tutor-feedback-btn" type="button">Ask Gemma for feedback</button>
-      </div>
-      <div class="tutor-answer">
-        <div class="tutor-answer-prefix">Chart answer</div>
-        <div id="tutor-answer-content" data-visible="false">
-          <p><strong>Management / Next steps:</strong> <span id="tutor-answer-mgmt">–</span></p>
-          <p><strong>Board pearl:</strong> <span id="tutor-answer-pearl">–</span></p>
+    <div class="tutor-panel-grid">
+      <div class="tutor-card">
+        <div class="tutor-card-title">Quiz</div>
+        <p id="tutor-question-text" class="tutor-question-text">Press “New question” to begin.</p>
+        <p id="tutor-question-source" class="tutor-question-source"></p>
+        <div class="tutor-button-row">
+          <button class="sb-btn" id="tutor-new-question" type="button">New question</button>
+          <button class="sb-btn" id="tutor-reveal-answer" type="button">Reveal answer</button>
+        </div>
+        <div class="tutor-answer">
+          <div class="tutor-answer-prefix">Chart answer</div>
+          <div id="tutor-answer-content" data-visible="false">
+            <p><strong>Management / Next steps:</strong> <span id="tutor-answer-mgmt">–</span></p>
+            <p><strong>Board pearl:</strong> <span id="tutor-answer-pearl">–</span></p>
+          </div>
+        </div>
+        <div class="tutor-feedback" id="tutor-feedback">
+          <span class="tutor-feedback-label">Status</span>
+          <p id="tutor-feedback-text">Use “New question” or toggle the priority filter to refresh the prompt.</p>
         </div>
       </div>
-      <div class="tutor-feedback" id="tutor-feedback">
-        <span class="tutor-feedback-label">Coach feedback will appear here</span>
-        <p id="tutor-feedback-text">Keep your answer field updated and then ask Gemma for context.</p>
-      </div>
-      <div class="tutor-background">
-        <p><strong>Section:</strong> <span id="tutor-section-title">–</span></p>
-        <p><strong>Normal baseline:</strong> <span id="tutor-section-normal">–</span></p>
-        <p><strong>Priority:</strong> <span id="tutor-critical-indicator" class="tutor-critical-indicator" data-critical="false">Routine row</span></p>
+      <div class="tutor-card">
+        <div class="tutor-card-title">Context</div>
+        <div class="tutor-background">
+          <p><strong>Section:</strong> <span id="tutor-section-title">–</span></p>
+          <p><strong>Normal baseline:</strong> <span id="tutor-section-normal">–</span></p>
+          <p><strong>Priority:</strong> <span id="tutor-critical-indicator" class="tutor-critical-indicator" data-critical="false">Routine row</span></p>
+        </div>
         <div class="tutor-resource">
           <strong>Resources &amp; references:</strong>
           <ul id="tutor-links"></ul>
+        </div>
+        <div class="tutor-config-row">
+          <label>
+            <input type="checkbox" id="tutor-critical-only" />
+            Ask about high-priority rows only
+          </label>
         </div>
       </div>
     </div>
@@ -2281,16 +2246,12 @@ function revealRow(el) {
 }
 
 function revealSection() {
-  // reveal all rows in the currently visible section
+  // reveal the row currently in view
   if (studyOrder.length === 0) return;
   const currentRow = studyOrder[studyIndex];
   if (!currentRow) return;
-  const sid = currentRow.getAttribute('data-sid');
-  studyOrder.filter(r => r.getAttribute('data-sid') === sid)
-    .forEach(r => {
-      r.classList.add('s-revealed');
-      r.querySelectorAll('td[data-cell="mgmt"], td[data-cell="pearl"]').forEach(cell => cell.classList.add('cell-revealed'));
-    });
+  currentRow.classList.add('s-revealed');
+  currentRow.querySelectorAll('td[data-cell="mgmt"], td[data-cell="pearl"]').forEach(cell => cell.classList.add('cell-revealed'));
 }
 
 function toggleShuffle() {
@@ -2377,16 +2338,12 @@ document.querySelectorAll('.nav a').forEach(link => {
   });
 });
 
-/* ── Tutor coach (WebLLM + Gemma) ── */
-const TUTOR_MODE_KEY = DATA_ID + '_tutor_mode';
-const TUTOR_ENDPOINT_KEY = DATA_ID + '_tutor_endpoint';
+/* ── Tutor coach (quiz-only) ── */
 const TUTOR_CRITICAL_KEY = DATA_ID + '_tutor_critical';
-
 const TUTOR_GLOBAL_RESOURCES = [
   { label: 'AAP Newborn Physical Exam overview', url: 'https://www.aap.org/en/patient-care/newborn-physical-examination/' },
   { label: 'StatPearls – Newborn exam pearls', url: 'https://www.ncbi.nlm.nih.gov/books/NBK537163/' }
 ];
-
 const TUTOR_TEMPLATES = [
   {
     id: 'management',
@@ -2405,18 +2362,14 @@ const TUTOR_TEMPLATES = [
   }
 ];
 
-let tutorSettings = { mode: 'auto', endpoint: '', criticalOnly: false };
-window.gemmaTutorStatus = window.gemmaTutorStatus || { label: 'Waiting for WebLLM + Gemma', ready: false };
-let tutorState = { row: null, question: '', template: null };
+let tutorSettings = { criticalOnly: false };
+let tutorState = { row: null };
+let tutorPanelOpen = false;
 
 function loadTutorSettings() {
   try {
-    const mode = localStorage.getItem(TUTOR_MODE_KEY);
-    const endpoint = localStorage.getItem(TUTOR_ENDPOINT_KEY);
-    const criticalOnly = localStorage.getItem(TUTOR_CRITICAL_KEY);
-    if (mode) tutorSettings.mode = mode;
-    if (endpoint) tutorSettings.endpoint = endpoint;
-    tutorSettings.criticalOnly = criticalOnly === 'true';
+    const stored = localStorage.getItem(TUTOR_CRITICAL_KEY);
+    tutorSettings.criticalOnly = stored === 'true';
   } catch (err) {
     console.warn('Could not load tutor settings', err);
   }
@@ -2424,41 +2377,10 @@ function loadTutorSettings() {
 
 function saveTutorSettings() {
   try {
-    localStorage.setItem(TUTOR_MODE_KEY, tutorSettings.mode);
-    localStorage.setItem(TUTOR_ENDPOINT_KEY, tutorSettings.endpoint);
     localStorage.setItem(TUTOR_CRITICAL_KEY, tutorSettings.criticalOnly ? 'true' : 'false');
   } catch (err) {
     console.warn('Could not save tutor settings', err);
   }
-}
-
-function describeTutorBackend() {
-  if (tutorSettings.mode === 'endpoint') {
-    const ready = Boolean(tutorSettings.endpoint);
-    return {
-      label: ready ? `Endpoint: ${tutorSettings.endpoint}` : 'Endpoint configured (no URL)',
-      ready
-    };
-  }
-  if (tutorSettings.mode === 'sim') {
-    return { label: 'Simulated tutor only', ready: true };
-  }
-  if (tutorSettings.mode === 'auto' && window.gemmaTutorStatus?.label) {
-    return window.gemmaTutorStatus;
-  }
-  if (typeof window.gemmaTutor === 'function') {
-    return { label: 'Gemma (WebLLM) ready', ready: true };
-  }
-  return { label: 'Waiting for WebLLM + Gemma', ready: false };
-}
-
-function updateTutorStatus() {
-  const statusEl = document.getElementById('tutor-llm-status');
-  if (!statusEl) return;
-  const info = describeTutorBackend();
-  statusEl.textContent = info.label;
-  statusEl.classList.toggle('ready', info.ready);
-  statusEl.title = info.ready ? 'Ready to receive prompts' : 'LLM integration not detected yet';
 }
 
 function buildTutorPool() {
@@ -2556,14 +2478,10 @@ function highlightTutorRow(uid) {
 function setTutorFeedback(text, opts = {}) {
   const container = document.getElementById('tutor-feedback');
   if (!container) return;
-  container.innerHTML = '';
-  const label = document.createElement('span');
-  label.className = 'tutor-feedback-label';
-  label.textContent = opts.label || 'Coach feedback';
-  const body = document.createElement('p');
-  body.textContent = text;
-  container.appendChild(label);
-  container.appendChild(body);
+  const label = container.querySelector('.tutor-feedback-label');
+  if (label) label.textContent = opts.label || 'Status';
+  const body = document.getElementById('tutor-feedback-text');
+  if (body) body.textContent = text;
 }
 
 function revealTutorAnswer() {
@@ -2572,163 +2490,72 @@ function revealTutorAnswer() {
     return;
   }
   updateTutorAnswerPanel(tutorState.row, true);
-  setTutorFeedback('Chart answers are now visible; use them to self-correct.', { label: 'Chart answer' });
-}
-
-function buildLLMPrompt(row, question, answer) {
-  const resources = row.imgs && row.imgs.length
-    ? row.imgs.map(item => `${item.label}: ${item.url}`).join('\n')
-    : 'None';
-  const sanitizedAnswer = answer || '(no answer provided)';
-  return `
-You are a pediatric tutor that uses the newborn exam chart as the single source of truth.
-Chart entry:
-Finding: ${row.finding}
-Section: ${row.sectionTitle}
-Normal: ${row.sectionNormal || 'Not specified'}
-Management: ${row.mgmt || 'Not recorded'}
-Pearl: ${row.pearl || 'Not recorded'}
-Resources:
-${resources}
-Student question: ${question}
-Student answer: ${sanitizedAnswer}
-Provide concise, actionable feedback referencing the chart details and at least one supporting resource link.
-`;
-}
-
-function parseLLMResponse(payload) {
-  if (!payload) return null;
-  if (typeof payload === 'string') return payload.trim();
-  if (Array.isArray(payload)) {
-    const combined = payload.map(piece => parseLLMResponse(piece)).filter(Boolean).join(' ');
-    return combined || null;
-  }
-  if (typeof payload === 'object') {
-    if (typeof payload.text === 'string') return payload.text.trim();
-    if (typeof payload.content === 'string') return payload.content.trim();
-    if (typeof payload.reply === 'string') return payload.reply.trim();
-    if (payload.message && typeof payload.message.content === 'string') return payload.message.content.trim();
-    if (payload.choices && payload.choices.length) {
-      const choice = payload.choices[0];
-      if (choice.message && typeof choice.message.content === 'string') return choice.message.content.trim();
-      if (typeof choice.text === 'string') return choice.text.trim();
-    }
-  }
-  return null;
-}
-
-function buildFallbackFeedback(row, answer) {
-  const parts = [];
-  if (answer) parts.push(`Your answer: ${answer}`);
-  if (row.mgmt) parts.push(`Management reference: ${row.mgmt}`);
-  if (row.pearl) parts.push(`Pearl reference: ${row.pearl}`);
-  if (row.imgs && row.imgs.length) {
-    parts.push(`Resources: ${row.imgs.map(item => item.label).join(', ')}`);
-  }
-  if (!parts.length) return 'No details available for this finding.';
-  return parts.join(' · ');
-}
-
-async function runTutorLLM(prompt) {
-  if (!prompt) return null;
-  if (tutorSettings.mode === 'sim') return null;
-  if (tutorSettings.mode === 'endpoint') {
-    if (!tutorSettings.endpoint) throw new Error('Provide an endpoint URL before asking Gemma.');
-    const res = await fetch(tutorSettings.endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt })
-    });
-    const payload = await res.json();
-    if (!res.ok) throw new Error(payload?.error || `Endpoint responded with ${res.status}`);
-    return parseLLMResponse(payload);
-  }
-  if (typeof window.gemmaTutor === 'function') {
-    const reply = await window.gemmaTutor(prompt, { row: tutorState.row });
-    return parseLLMResponse(reply);
-  }
-  return null;
-}
-
-async function requestTutorFeedback() {
-  if (!tutorState.row) {
-    setTutorFeedback('Generate a question first.', { label: 'Tutor coach' });
-    return;
-  }
-  const userAnswer = document.getElementById('tutor-response')?.value.trim() || '';
-  setTutorFeedback('Contacting Gemma…', { label: 'LLM' });
-  try {
-    const prompt = buildLLMPrompt(tutorState.row, tutorState.question, userAnswer);
-    const reply = await runTutorLLM(prompt);
-    if (reply) {
-      setTutorFeedback(reply, { label: 'Gemma feedback' });
-    } else {
-      setTutorFeedback(buildFallbackFeedback(tutorState.row, userAnswer), { label: 'Simulated feedback' });
-    }
-  } catch (err) {
-    setTutorFeedback(`LLM error: ${err.message}`, { label: 'LLM error' });
-  }
+  setTutorFeedback('Chart answers are now visible.', { label: 'Chart answer' });
 }
 
 function newTutorQuestion() {
   const row = pickTutorRow();
   if (!row) {
-    document.getElementById('tutor-question-text').textContent = 'No findings match the current filters.';
+    const textEl = document.getElementById('tutor-question-text');
+    if (textEl) textEl.textContent = 'No findings match the current filter.';
     document.getElementById('tutor-question-source').textContent = '';
-    setTutorFeedback('Adjust your filter or refresh the chart.', { label: 'Tutor coach' });
+    setTutorFeedback('Adjust your priority filter or refresh the chart.', { label: 'Tutor coach' });
+    updateTutorAnswerPanel(null, false);
     return;
   }
   const template = TUTOR_TEMPLATES[Math.floor(Math.random() * TUTOR_TEMPLATES.length)];
   const question = template.prompt(row);
   tutorState = { row, template, question };
   document.getElementById('tutor-question-text').textContent = question;
-  document.getElementById('tutor-question-source').textContent = `Source of truth: ${row.sectionTitle} · Normal: ${row.sectionNormal || '–'}`;
-  document.getElementById('tutor-response').value = '';
+  document.getElementById('tutor-question-source').textContent = `Source: ${row.sectionTitle} · Normal: ${row.sectionNormal || '–'}`;
   updateTutorAnswerPanel(row, false);
   setTutorBackground(row);
   showTutorResources(row);
   highlightTutorRow(row.uid);
-  setTutorFeedback('Chart answer hidden until you reveal it or ask for feedback.', { label: 'Tutor coach' });
+  setTutorFeedback('Use “Reveal answer” when you are ready.', { label: 'Tutor coach' });
+}
+
+function setTutorPanelOpen(open) {
+  tutorPanelOpen = open;
+  const panel = document.getElementById('tutor-panel');
+  const toggle = document.getElementById('tutor-panel-toggle');
+  if (panel) panel.setAttribute('data-open', open ? 'true' : 'false');
+  if (toggle) {
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    toggle.textContent = open ? 'Hide Tutor mode' : 'Show Tutor mode';
+  }
+  if (open && !tutorState.row) {
+    newTutorQuestion();
+  }
 }
 
 loadTutorSettings();
-const modelSelect = document.getElementById('tutor-model-select');
-const endpointInput = document.getElementById('tutor-endpoint');
+const toggleBtn = document.getElementById('tutor-panel-toggle');
+const closeBtn = document.getElementById('tutor-panel-close');
 const criticalOnlyCheck = document.getElementById('tutor-critical-only');
-if (modelSelect) {
-  modelSelect.value = tutorSettings.mode;
-  modelSelect.addEventListener('change', e => {
-    tutorSettings.mode = e.target.value;
-    saveTutorSettings();
-    updateTutorStatus();
-  });
+if (toggleBtn) {
+  toggleBtn.addEventListener('click', () => setTutorPanelOpen(!tutorPanelOpen));
 }
-if (endpointInput) {
-  endpointInput.value = tutorSettings.endpoint;
-  endpointInput.addEventListener('input', e => {
-    tutorSettings.endpoint = e.target.value.trim();
-    saveTutorSettings();
-    updateTutorStatus();
-  });
+if (closeBtn) {
+  closeBtn.addEventListener('click', () => setTutorPanelOpen(false));
 }
 if (criticalOnlyCheck) {
   criticalOnlyCheck.checked = tutorSettings.criticalOnly;
   criticalOnlyCheck.addEventListener('change', e => {
     tutorSettings.criticalOnly = e.target.checked;
     saveTutorSettings();
-    newTutorQuestion();
+    if (tutorPanelOpen) {
+      newTutorQuestion();
+    }
   });
 }
 
-document.getElementById('tutor-new-question')?.addEventListener('click', newTutorQuestion);
+document.getElementById('tutor-new-question')?.addEventListener('click', () => {
+  if (!tutorPanelOpen) setTutorPanelOpen(true);
+  newTutorQuestion();
+});
 document.getElementById('tutor-reveal-answer')?.addEventListener('click', revealTutorAnswer);
-document.getElementById('tutor-feedback-btn')?.addEventListener('click', requestTutorFeedback);
-
-updateTutorStatus();
-setInterval(updateTutorStatus, 2200);
-newTutorQuestion();
-
-
+setTutorPanelOpen(false);
 showDisclaimer();
 </script>
 <div id="study-bar">
@@ -2745,11 +2572,6 @@ showDisclaimer();
   </label>
   <button class="sb-close" onclick="exitStudyMode()">Exit study</button>
 </div>
-
-<script>
-  window.GEMMA4_MODEL_ROOT = window.GEMMA4_MODEL_ROOT || './webllm/models/gemma-4-E2B-it-q4f16_1-MLC';
-</script>
-<script type="module" src="./webllm/loader.js"></script>
 
 </body>
 </html>

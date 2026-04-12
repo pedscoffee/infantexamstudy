@@ -22,9 +22,9 @@ This single-page chart is a searchable, editable quick reference for the newborn
 - Local storage now keys edits and mastery data by a `DATA_ID` constant that is rewritten on each export, preventing old exports from clobbering fresh charts.
 - Inline reveal buttons now add a `cell-revealed` class so only the clicked cell is unblurred; the row class still tracks whether anything has been revealed for quick-mark controls.
 
-## WebLLM + Gemma 4 tutor setup
-1. Use a Chromium-based browser that exposes WebGPU with `shader-f16` support; the loader at `webllm/loader.js` dynamically imports `https://esm.run/@mlc-ai/web-llm`, so no bundler is required but keep a fast connection during the first download. citeturn3search5
-2. Download the `welcoma/gemma-4-E2B-it-q4f16_1-MLC` package (it already ships with `release-manifest.json`, the WebGPU library, tokenizer, and the quantized shards) and unpack it under `webllm/models/gemma-4-E2B-it-q4f16_1-MLC`. That repo is targeted at in-browser WebLLM inference and figures into the loader’s default config. citeturn1search1
-3. If you host the model assets somewhere else, set `window.GEMMA4_MODEL_ROOT` before the loader script runs so it can build the correct app config; `index.html` already initializes the global to the `webllm/models/...` path near the bottom of the page.
-4. Customize `window.GEMMA4_SYSTEM_PROMPT` to change Gemma’s persona (the default prompt asks it to stay concise and reference the chart as its single source of truth).
-5. Reload the page, click “New question,” and let the tutor panel confirm that `window.gemmaTutorStatus` reaches “Gemma 4 ready (WebLLM)”; `window.gemmaTutorReady` resolves once the engine finishes loading, and “Ask Gemma for feedback” becomes actionable once the toolkit completes its download.
+## Tutor mode
+The tutor panel is hidden by default. Click **Show Tutor mode** to expand the coach, which immediately asks a random chart row question; use **Hide Tutor** if you want to collapse the panel again.
+1. Hit **New question** (the first time you open the panel it auto-populates) to pick a random finding; the related section, normal baseline, and resource links show up on the right.
+2. When you are ready, press **Reveal answer** to unblur the Management and Board Pearl cells for that row; the row also gets highlighted in the table.
+3. Use the **“Ask about high-priority rows only”** checkbox to focus on critical findings before re-queuing a question.
+4. Reload the page if you make edits to the chart; the tutor panel will automatically read the updated rows and keep working within the chart as the single source of truth.
