@@ -79,8 +79,16 @@ body {
   left: 9px;
   top: 50%;
   transform: translateY(-50%);
-  opacity: 0.4;
-  font-size: 14px;
+  opacity: 0.6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: rgba(255,255,255,0.65);
+}
+.search-icon svg {
+  width: 16px;
+  height: 16px;
 }
 
 .legend {
@@ -455,6 +463,7 @@ body.study-mode .study-banner { display: block; }
   font-family: 'IBM Plex Sans', sans-serif;
 }
 .reveal-ph:hover { background: rgba(99,102,241,0.14); border-color: rgba(99,102,241,0.55); color: #818cf8; }
+.reveal-ph svg { width: 16px; height: 16px; flex-shrink: 0; }
 
 /* in study mode, show placeholder and hide text for hidden cols */
 body.study-mode.hide-mgmt  tr.data-row:not(.s-revealed) td[data-cell="mgmt"]  .cell-text,
@@ -695,32 +704,39 @@ body.edit-mode .edit-banner { display: block; }
 
 <div class="header">
   <div class="header-title">
-    <h1>🩺 Newborn Physical Exam</h1>
+    <h1>Newborn Physical Exam</h1>
     <p>Quick Reference · Findings · Management · Board Pearls</p>
   </div>
   <div class="search-box">
-    <span class="search-icon">⌕</span>
+    <span class="search-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="10" cy="10" r="7.5" />
+        <line x1="16.5" y1="16.5" x2="21" y2="21" />
+      </svg>
+    </span>
     <input id="search" type="text" placeholder="Search findings, mnemonics, diagnoses..." autocomplete="off" spellcheck="false" />
   </div>
   <div class="legend">
-    <div class="leg"><div class="leg-dot crit"></div> High-priority / ⚑</div>
+    <div class="leg"><div class="leg-dot crit"></div> High-priority rows</div>
     <div class="leg"><div class="leg-dot pearl"></div> Board pearl column</div>
   </div>
   <div id="result-count"></div>
-  <span class="save-indicator" id="save-indicator">✓ Saved</span>
-  <button class="study-btn" id="study-toggle" onclick="toggleStudyPopover()">📖 Study Mode</button>
+  <span class="save-indicator" id="save-indicator">Saved</span>
+  <button class="study-btn" id="study-toggle" onclick="handleStudyToggle()" aria-pressed="false">
+    <span class="study-label">Study Mode</span>
+  </button>
   <div class="study-popover" id="study-popover">
     <div class="study-popover-title">Hide columns for recall</div>
     <label><input type="radio" name="sc" value="both" checked> Hide Management + Pearl</label>
     <label><input type="radio" name="sc" value="mgmt"> Hide Management only</label>
     <label><input type="radio" name="sc" value="pearl"> Hide Pearl only</label>
-    <button class="study-go-btn" onclick="enterStudyMode()">▶ Start Study Mode</button>
+    <button class="study-go-btn" onclick="enterStudyMode()">Start study session</button>
   </div>
-  <button class="edit-btn" id="edit-toggle" onclick="toggleEditMode()">✎ Edit Mode</button>
-  <button class="export-btn" onclick="exportHTML()">⬇ Export File</button>
+  <button class="edit-btn" id="edit-toggle" onclick="toggleEditMode()">Edit Mode</button>
+  <button class="export-btn" onclick="exportHTML()">Export File</button>
 </div>
-<div class="edit-banner">✎ Edit mode — click any cell to edit text · Row controls appear in the Finding column · Changes auto-save to your browser · Use Export File to bake edits into a new HTML file</div>
-<div class="study-banner">📖 Study Mode — click any blurred cell to reveal · Use the bar below to navigate findings · Press Esc to exit</div>
+<div class="edit-banner">Edit mode — click any cell to edit text · Row controls appear in the Finding column · Changes auto-save to your browser · Use Export File to bake edits into a new HTML file</div>
+<div class="study-banner">Study Mode — click any blurred cell to reveal · Use the bar below to navigate findings · Press Esc to exit</div>
 
 <div id="progress-strip">
   <div class="progress-track">
@@ -735,7 +751,7 @@ body.edit-mode .edit-banner { display: block; }
     <button class="mf-pill p-r"   data-mf="1"    onclick="setMasteryFilter('1')">Reviewing</button>
     <button class="mf-pill p-l"   data-mf="2"    onclick="setMasteryFilter('2')">Learned</button>
   </div>
-  <button class="progress-reset" onclick="resetMastery()">↺ Reset</button>
+  <button class="progress-reset" onclick="resetMastery()">Reset progress</button>
 </div>
 
 <div class="nav" id="section-nav">
@@ -1328,10 +1344,11 @@ const SECTIONS = [
 ];
 
 /* ── localStorage key ── */
-const STORE_KEY = 'newborn_exam_v2';
+const DATA_ID = 'newborn_exam_v2';
+const STORE_KEY = DATA_ID + '_edits';
 
 /* ── mastery storage (needed early for buildRow) ── */
-const MASTERY_KEY = 'mastery_v1';
+const MASTERY_KEY = DATA_ID + '_mastery';
 function loadMastery() {
   try { return JSON.parse(localStorage.getItem(MASTERY_KEY) || '{}'); } catch { return {}; }
 }
@@ -1354,21 +1371,26 @@ function renderImgLinks(imgs) {
   return imgs.map(i => `<a href="${i.url}" target="_blank" rel="noopener">${i.label}</a>`).join('');
 }
 
+const revealIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M2.25 12C3.951 9.032 7.104 6.75 12 6.75s8.049 2.282 9.75 5.25c-1.701 2.968-4.854 5.25-9.75 5.25S3.951 14.968 2.25 12z" />
+  <circle cx="12" cy="12" r="3" />
+</svg>`;
+
 let rowCounter = 0; // unique id for each rendered row
 
 function buildRow(sid, rid, r) {
   const uid = `${sid}:${rid}`;
   const isCrit = r.crit;
   const critClass = isCrit ? ' critical' : '';
-  const badge = isCrit ? '<span class="crit-badge">⚑ HIGH PRIORITY</span>' : '';
+  const badge = isCrit ? '<span class="crit-badge">High priority</span>' : '';
   const mState = getMastery(uid);
   const mLabels = ['○','◑','●'];
   const mTitles = ['Not started — click to mark reviewing','Still reviewing — click to mark learned','Learned — click to reset'];
   return `<tr class="data-row${critClass}" data-uid="${uid}" data-sid="${sid}" data-imgs='${JSON.stringify(r.imgs||[])}'>
     <td class="finding-col">
       <div class="row-controls">
-        <button class="row-btn del-btn" title="Delete this row" onclick="deleteRow(this)">✕ Delete</button>
-        <button class="row-btn crit-btn ${isCrit?'on':''}" title="Toggle high priority" onclick="toggleCrit(this)">${isCrit?'⚑ Critical':'○ Normal'}</button>
+        <button class="row-btn del-btn" title="Delete this row" onclick="deleteRow(this)">Delete</button>
+        <button class="row-btn crit-btn ${isCrit?'on':''}" title="Toggle high priority" onclick="toggleCrit(this)">${isCrit?'Critical':'Normal'}</button>
       </div>
       <div style="display:flex;align-items:flex-start;gap:2px;margin-bottom:3px;">
         <button class="mastery-dot" data-m="${mState}" data-uid="${uid}" title="${mTitles[mState]}" onclick="cycleMastery('${uid}')">${mLabels[mState]}</button>
@@ -1383,8 +1405,20 @@ function buildRow(sid, rid, r) {
         <button class="qm-btn qm-l" onclick="quickMark('${uid}',2)">● Learned</button>
       </div>
     </td>
-    <td class="mgmt-cell" data-cell="mgmt" contenteditable="false" spellcheck="false"><span class="cell-text">${r.mgmt}</span><span class="reveal-ph" onclick="revealRow(this)">👁 Click to reveal management</span></td>
-    <td class="pearl-cell" data-cell="pearl" contenteditable="false" spellcheck="false"><span class="cell-text">${r.pearl}</span><span class="reveal-ph" onclick="revealRow(this)">👁 Click to reveal pearl</span></td>
+    <td class="mgmt-cell" data-cell="mgmt" contenteditable="false" spellcheck="false">
+      <span class="cell-text">${r.mgmt}</span>
+      <span class="reveal-ph" onclick="revealRow(this)">
+        ${revealIcon}
+        <span>Reveal management details</span>
+      </span>
+    </td>
+    <td class="pearl-cell" data-cell="pearl" contenteditable="false" spellcheck="false">
+      <span class="cell-text">${r.pearl}</span>
+      <span class="reveal-ph" onclick="revealRow(this)">
+        ${revealIcon}
+        <span>Reveal board pearl</span>
+      </span>
+    </td>
     <td class="img-col"><div class="img-links">${renderImgLinks(r.imgs||[])}</div></td>
   </tr>`;
 }
@@ -1402,8 +1436,8 @@ function buildTable(section) {
         <tr>
           <th class="finding-col">Finding</th>
           <th class="mgmt-col">Management / Next Steps</th>
-          <th class="pearl-col">⭑ Board Pearl</th>
-          <th class="img-col">📷 Image Reference</th>
+          <th class="pearl-col">Board Pearl</th>
+          <th class="img-col">Image Reference</th>
         </tr>
       </thead>
       <tbody>${rows}</tbody>
@@ -1487,7 +1521,7 @@ function toggleEditMode() {
   document.body.classList.toggle('edit-mode', editMode);
   const btn = document.getElementById('edit-toggle');
   btn.classList.toggle('active', editMode);
-  btn.textContent = editMode ? '✓ Done Editing' : '✎ Edit Mode';
+  btn.textContent = editMode ? 'Done editing' : 'Edit Mode';
 
   // toggle contenteditable on all editable cells
   document.querySelectorAll('td[data-cell], .finding-name[data-cell]').forEach(el => {
@@ -1570,11 +1604,11 @@ function deleteRow(btn) {
 function applyRowCrit(row, isCrit) {
   row.classList.toggle('critical', isCrit);
   const badge = row.querySelector('.badge-wrap');
-  if (badge) badge.innerHTML = isCrit ? '<span class="crit-badge">⚑ HIGH PRIORITY</span>' : '';
+  if (badge) badge.innerHTML = isCrit ? '<span class="crit-badge">High priority</span>' : '';
   const critBtn = row.querySelector('.crit-btn');
   if (critBtn) {
     critBtn.classList.toggle('on', isCrit);
-    critBtn.textContent = isCrit ? '⚑ Critical' : '○ Normal';
+    critBtn.textContent = isCrit ? 'Critical' : 'Normal';
   }
   const findName = row.querySelector('.finding-name');
   if (findName) findName.style.color = isCrit ? 'var(--red)' : '';
@@ -1653,10 +1687,12 @@ function exportHTML() {
   // Grab the current HTML and replace the SECTIONS constant
   const html = document.documentElement.outerHTML;
   const exportData = JSON.stringify(exportSections, null, 2);
-  const updated = html.replace(
+  const newDataId = `${DATA_ID}_${Date.now()}`;
+  let updated = html.replace(
     /const SECTIONS = \[[\s\S]*?\];\n\n\/\* ── localStorage/,
     `const SECTIONS = ${exportData};\n\n/* ── localStorage`
   );
+  updated = updated.replace(/const DATA_ID = '.*?';/, `const DATA_ID = '${newDataId}';`);
 
   const blob = new Blob([updated], { type: 'text/html' });
   const a = document.createElement('a');
@@ -1780,6 +1816,20 @@ function toggleStudyPopover() {
   if (editMode) { alert('Please exit Edit Mode before entering Study Mode.'); return; }
   document.getElementById('study-popover').classList.toggle('open');
 }
+
+function handleStudyToggle() {
+  if (studyMode) return exitStudyMode();
+  toggleStudyPopover();
+}
+
+function updateStudyToggleState() {
+  const btn = document.getElementById('study-toggle');
+  if (!btn) return;
+  btn.classList.toggle('active', studyMode);
+  const label = btn.querySelector('.study-label');
+  if (label) label.textContent = studyMode ? 'Studying…' : 'Study Mode';
+  btn.setAttribute('aria-pressed', studyMode ? 'true' : 'false');
+}
 // close popover on outside click
 document.addEventListener('click', e => {
   const btn = document.getElementById('study-toggle');
@@ -1794,24 +1844,22 @@ function enterStudyMode() {
   try { localStorage.setItem('study_col_pref', selected); } catch {}
   studyMode = true;
   document.body.classList.add('study-mode', 'hide-' + selected);
-  document.getElementById('study-toggle').classList.add('active');
-  document.getElementById('study-toggle').textContent = '📖 Studying…';
   buildStudyOrder();
   studyIndex = 0;
   renderStudyBar();
   if (studyOrder.length > 0) goToStudyIndex(0);
+  updateStudyToggleState();
 }
 
 function exitStudyMode() {
   studyMode = false;
   document.body.classList.remove('study-mode', 'hide-mgmt', 'hide-pearl', 'hide-both');
-  document.getElementById('study-toggle').classList.remove('active');
-  document.getElementById('study-toggle').textContent = '📖 Study Mode';
   // clear highlights and revealed state
   document.querySelectorAll('tr.s-current').forEach(r => r.classList.remove('s-current'));
   document.querySelectorAll('tr.s-revealed').forEach(r => r.classList.remove('s-revealed'));
   document.querySelectorAll('tr.s-learned-dim').forEach(r => r.classList.remove('s-learned-dim'));
   studyOrder = [];
+  updateStudyToggleState();
 }
 
 function buildStudyOrder() {
@@ -1949,9 +1997,9 @@ document.querySelectorAll('.nav a').forEach(link => {
 });
 </script>
 <div id="study-bar">
-  <button class="sb-btn" id="sb-prev" onclick="studyNav(-1)">← Prev</button>
+  <button class="sb-btn" id="sb-prev" onclick="studyNav(-1)">Prev</button>
   <span class="sb-counter" id="sb-counter">—</span>
-  <button class="sb-btn" id="sb-next" onclick="studyNav(1)">Next →</button>
+  <button class="sb-btn" id="sb-next" onclick="studyNav(1)">Next</button>
   <span class="sb-divider">|</span>
   <button class="sb-reveal-all" onclick="revealSection()">Reveal Section</button>
   <label class="sb-toggle-wrap">
@@ -1960,7 +2008,7 @@ document.querySelectorAll('.nav a').forEach(link => {
   <label class="sb-toggle-wrap">
     <input type="checkbox" id="sb-skip" onchange="toggleSkipLearned()"> Skip Learned
   </label>
-  <button class="sb-close" onclick="exitStudyMode()">✕ Exit</button>
+  <button class="sb-close" onclick="exitStudyMode()">Exit study</button>
 </div>
 
 </body>
