@@ -6,16 +6,18 @@
 <meta name="description" content="Searchable newborn physical exam quick reference chart with study mode, mastery tracking, and quiz coach for pediatrics students and residents.">
 <meta name="keywords" content="newborn exam, pediatrics, board review, physical exam, neonatal, study guide">
 <meta name="author" content="PedsCoffee">
-<meta property="og:title" content="Newborn Physical Exam — Quick Reference">
+<meta property="og:title" content="Infant Physical Exam — Quick Reference">
 <meta property="og:description" content="A searchable study chart for the newborn physical exam with board pearls, management steps, and a built-in quiz coach.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://pedscoffee.github.io/infantexamstudy/">
 <link rel="canonical" href="https://pedscoffee.github.io/infantexamstudy/">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👶</text></svg>">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
-<title>Newborn Exam — Quick Reference</title>
+<title>Infant Physical Exam — Quick Reference</title>
 <style>
 
 :root {
@@ -230,6 +232,21 @@ body {
 }
 
 .header-title { flex-shrink: 0; }
+.header-title a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+.header-title a:hover { opacity: 0.85; }
+.header-logo {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 4px;
+}
 .header-title h1 { font-size: 15px; font-weight: 600; letter-spacing: 0.3px; }
 .header-title p  { font-size: 10px; opacity: 0.6; margin-top: 1px; }
 
@@ -1342,8 +1359,13 @@ body.study-mode .back-to-top { bottom: 80px; }
 </div>
 <div class="header">
   <div class="header-title">
-    <h1>Newborn Physical Exam</h1>
-    <p>Quick Reference · Findings · Management · Board Pearls</p>
+    <a href="#" onclick="event.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' });">
+      <img src="favicon-32x32.png" alt="" class="header-logo">
+      <div>
+        <h1>Infant Physical Exam</h1>
+        <p>Quick Reference · Findings · Management · Board Pearls</p>
+      </div>
+    </a>
   </div>
   <div class="search-box">
     <span class="search-icon" aria-hidden="true">
