@@ -740,8 +740,11 @@ body.edit-mode .add-row-wrap { display: block; }
 body.edit-mode .edit-banner { display: block; }
 
 /* tutor coach panel */
-.tutor-panel {
+.tutor-shell {
   margin: 10px 20px 20px;
+}
+.tutor-panel {
+  margin: 0;
   padding: 18px 22px;
   border-radius: 14px;
   border: 1px solid rgba(99, 102, 241, 0.35);
@@ -793,6 +796,38 @@ body.edit-mode .edit-banner { display: block; }
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
+}
+.tutor-panel[data-open="false"] {
+  display: none;
+}
+.tutor-panel-toggle {
+  border: 1px solid rgba(99, 102, 241, 0.45);
+  background: #1f2c57;
+  color: white;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-top: 8px;
+}
+.tutor-panel-toggle:hover {
+  background: #2f3c7f;
+}
+.tutor-panel-close {
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.tutor-panel-close:hover {
+  background: rgba(255, 255, 255, 0.4);
 }
 .tutor-card {
   background: white;
@@ -2371,6 +2406,7 @@ const TUTOR_TEMPLATES = [
 ];
 
 let tutorSettings = { mode: 'auto', endpoint: '', criticalOnly: false };
+window.gemmaTutorStatus = window.gemmaTutorStatus || { label: 'Waiting for WebLLM + Gemma', ready: false };
 let tutorState = { row: null, question: '', template: null };
 
 function loadTutorSettings() {
@@ -2406,6 +2442,9 @@ function describeTutorBackend() {
   }
   if (tutorSettings.mode === 'sim') {
     return { label: 'Simulated tutor only', ready: true };
+  }
+  if (tutorSettings.mode === 'auto' && window.gemmaTutorStatus?.label) {
+    return window.gemmaTutorStatus;
   }
   if (typeof window.gemmaTutor === 'function') {
     return { label: 'Gemma (WebLLM) ready', ready: true };
@@ -2706,6 +2745,11 @@ showDisclaimer();
   </label>
   <button class="sb-close" onclick="exitStudyMode()">Exit study</button>
 </div>
+
+<script>
+  window.GEMMA4_MODEL_ROOT = window.GEMMA4_MODEL_ROOT || './webllm/models/gemma-4-E2B-it-q4f16_1-MLC';
+</script>
+<script type="module" src="./webllm/loader.js"></script>
 
 </body>
 </html>
