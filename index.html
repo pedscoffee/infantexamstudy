@@ -1393,6 +1393,24 @@ const SECTIONS = [
 const DATA_ID = 'newborn_exam_v2';
 const STORE_KEY = DATA_ID + '_edits';
 
+const DISCLAIMER_KEY = DATA_ID + '_disclaimer_ack';
+function showDisclaimer() {
+  const overlay = document.getElementById('disclaimer-overlay');
+  if (!overlay) return;
+  try {
+    const ack = localStorage.getItem(DISCLAIMER_KEY);
+    if (ack === 'true') return;
+  } catch {}
+  overlay.style.display = 'flex';
+  document.body.classList.add('modal-block');
+}
+function acknowledgeDisclaimer() {
+  const overlay = document.getElementById('disclaimer-overlay');
+  if (overlay) overlay.style.display = 'none';
+  document.body.classList.remove('modal-block');
+  try { localStorage.setItem(DISCLAIMER_KEY, 'true'); } catch {}
+}
+
 /* ── mastery storage (needed early for buildRow) ── */
 const MASTERY_KEY = DATA_ID + '_mastery';
 function loadMastery() {
@@ -2044,6 +2062,8 @@ document.querySelectorAll('.nav a').forEach(link => {
     if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 });
+
+showDisclaimer();
 </script>
 <div id="study-bar">
   <button class="sb-btn" id="sb-prev" onclick="studyNav(-1)">Prev</button>
