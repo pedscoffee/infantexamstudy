@@ -761,11 +761,11 @@ body.edit-mode .edit-banner { display: block; }
 }
 .tutor-panel {
   margin: 0;
-  padding: 18px 22px;
-  border-radius: 14px;
-  border: 1px solid rgba(99, 102, 241, 0.35);
-  background: linear-gradient(180deg, rgba(14, 45, 74, 0.08), rgba(240, 247, 255, 0.9));
-  box-shadow: 0 15px 30px rgba(15, 45, 74, 0.15);
+  padding: 0;
+  border-radius: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
 }
 .tutor-panel[data-open="false"] {
   display: none;
@@ -836,12 +836,12 @@ body.edit-mode .edit-banner { display: block; }
   flex-wrap: wrap;
 }
 .tutor-card {
-  background: white;
+  background: var(--surface);
   border-radius: 12px;
   padding: 14px 16px;
   flex: 1 1 320px;
   min-width: 280px;
-  box-shadow: 0 6px 20px rgba(15, 45, 74, 0.08);
+  border: 1px solid var(--border);
 }
 .tutor-card-title {
   font-size: 12px;
@@ -871,24 +871,23 @@ body.edit-mode .edit-banner { display: block; }
 .tutor-action-btn {
   flex: 1;
   min-width: 140px;
-  border: none;
-  border-radius: 24px;
+  border-radius: 20px;
   padding: 10px 18px;
   font-size: 13px;
   font-weight: 600;
-  color: white;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35);
+  color: var(--surface);
   cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition: transform 0.15s;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: var(--navy);
 }
 .tutor-action-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.4);
 }
 .tutor-action-btn.secondary {
-  background: linear-gradient(135deg, #ec4899, #db2777);
-  box-shadow: 0 10px 20px rgba(220, 38, 125, 0.35);
+  background: var(--navy-mid);
+  border-color: rgba(255, 255, 255, 0.6);
+  color: #fff;
 }
 .tutor-answer {
   border: 1px solid rgba(15, 45, 74, 0.08);
@@ -1036,6 +1035,33 @@ body.edit-mode .edit-banner { display: block; }
   .tutor-background,
   .tutor-resource {
     font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+  .header {
+    gap: 10px;
+  }
+  .tutor-panel-grid {
+    gap: 12px;
+  }
+  .tutor-card {
+    border-radius: 16px;
+    padding: 14px;
+  }
+  .tutor-action-row {
+    flex-direction: column;
+  }
+  .tutor-action-btn {
+    min-width: auto;
+    width: 100%;
+  }
+  .tutor-background,
+  .tutor-resource {
+    padding: 8px 0;
   }
 }
 
