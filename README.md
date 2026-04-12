@@ -23,7 +23,7 @@ Mark each finding as Not Started, Reviewing, or Learned using the mastery dots. 
 ### Study Mode
 Hide the Management and/or Board Pearl columns, then reveal them one at a time to practice active recall. Use the floating navigation bar to step through findings, shuffle the order, or skip rows you've already learned.
 
-### Tutor Mode
+### Quiz Mode
 A built-in quiz coach that pulls random findings and prompts you with management or pearl recall questions. Filter by mastery level or high-priority rows to focus your practice.
 
 ### Edit Mode
@@ -34,7 +34,7 @@ Modify findings, management notes, pearls, and section normals directly in the b
 1. **Open the chart**: Visit the [live site](https://pedscoffee.github.io/infantexamstudy/) or open `index.html` directly in your browser — no build step or dependencies required.
 2. **Study**: Click **Study Mode** to hide columns and practice recall. Use the floating bar to navigate.
 3. **Track progress**: Click the mastery dot beside each finding to cycle through Not Started → Reviewing → Learned.
-4. **Quiz yourself**: Open **Tutor Mode** for randomized questions with chart-based answers.
+4. **Quiz yourself**: Open **Quiz Mode** for randomized questions with chart-based answers.
 5. **Edit**: Toggle **Edit Mode** to modify content in-place. Export to save your edits into a new HTML file.
 
 ## Contributing

@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Searchable newborn physical exam quick reference chart with study mode, mastery tracking, and tutor coach for pediatrics students and residents.">
+<meta name="description" content="Searchable newborn physical exam quick reference chart with study mode, mastery tracking, and quiz coach for pediatrics students and residents.">
 <meta name="keywords" content="newborn exam, pediatrics, board review, physical exam, neonatal, study guide">
 <meta name="author" content="PedsCoffee">
 <meta property="og:title" content="Newborn Physical Exam — Quick Reference">
-<meta property="og:description" content="A searchable study chart for the newborn physical exam with board pearls, management steps, and a built-in tutor coach.">
+<meta property="og:description" content="A searchable study chart for the newborn physical exam with board pearls, management steps, and a built-in quiz coach.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://pedscoffee.github.io/infantexamstudy/">
 <link rel="canonical" href="https://pedscoffee.github.io/infantexamstudy/">
@@ -71,7 +71,7 @@ body {
   line-height: 1.6;
 }
 #disclaimer-overlay .disclaimer-card a { color: #4338ca; font-weight: 600; }
-#disclaimer-overlay .disclaimer-card button {
+#disclaimer-overlay .disclaimer-card button.disclaimer-continue {
   margin-top: 16px;
   background: #4338ca;
   color: white;
@@ -80,7 +80,138 @@ body {
   padding: 10px 16px;
   font-size: 14px;
   font-weight: 600;
+  width: 100%;
 }
+#disclaimer-overlay .disclaimer-card button.disclaimer-continue:hover { background: #5046e4; }
+
+/* onboarding steps */
+.onboarding-steps {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0 4px;
+  flex-wrap: wrap;
+}
+.onboarding-step {
+  flex: 1;
+  min-width: 100px;
+  background: #f0f0ff;
+  border: 1px solid #e0e0f0;
+  border-radius: 8px;
+  padding: 10px 10px 8px;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.35;
+}
+.onboarding-step .step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: #4338ca;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+.onboarding-step .step-label {
+  display: block;
+  font-weight: 600;
+  color: #1e1b4b;
+  font-size: 11.5px;
+}
+.onboarding-step .step-desc {
+  color: #6b7280;
+  font-size: 10.5px;
+  margin-top: 2px;
+}
+
+/* ─── HELP OVERLAY ─────────────────────────────────── */
+.help-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.6);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+  font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+}
+.help-btn:hover { background: rgba(255,255,255,0.22); color: white; }
+
+#help-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 32, 54, 0.8);
+  z-index: 650;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+#help-overlay.open { display: flex; }
+.help-card {
+  background: white;
+  color: #0f172a;
+  padding: 24px;
+  border-radius: 12px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.help-card h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  color: var(--navy);
+}
+.help-card table { background: transparent; border: none; margin-bottom: 0; }
+.help-card table td { padding: 5px 10px; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
+.help-card table tr:last-child td { border-bottom: none; }
+.help-card kbd {
+  display: inline-block;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  padding: 1px 7px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+  box-shadow: 0 1px 0 #d1d5db;
+  white-space: nowrap;
+}
+.help-card .help-close {
+  margin-top: 14px;
+  width: 100%;
+  background: var(--navy);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+}
+.help-card .help-close:hover { background: var(--navy-mid); }
+.help-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--muted);
+  margin: 12px 0 6px;
+}
+.help-section-title:first-child { margin-top: 0; }
 
 /* ─── STICKY HEADER ───────────────────────────────── */
 .header {
@@ -750,7 +881,7 @@ body.edit-mode .add-row-wrap { display: block; }
 }
 body.edit-mode .edit-banner { display: block; }
 
-/* tutor coach panel */
+/* quiz coach panel */
 .tutor-shell {
   margin: 10px 20px 20px;
 }
@@ -1183,7 +1314,29 @@ body.study-mode .back-to-top { bottom: 80px; }
   <div class="disclaimer-card">
     <p><strong>Educational draft.</strong> This chart is a work in progress and likely contains errors as we are just getting started. It is still in its "infancy". Use clinical judgment, verify with trusted references, and treat it as supplemental material.</p>
     <p>Please contribute!  Suggestions for additions or improvements welcome: <a href="https://github.com/pedscoffee/infantexamstudy/discussions/1" target="_blank" rel="noopener">the discussions page</a>.</p>
-    <button onclick="acknowledgeDisclaimer()">Continue to the chart</button>
+    <div class="onboarding-steps">
+      <div class="onboarding-step">
+        <span class="step-num">1</span>
+        <span class="step-label">Browse</span>
+        <span class="step-desc">Explore findings by body system</span>
+      </div>
+      <div class="onboarding-step">
+        <span class="step-num">2</span>
+        <span class="step-label">Study Mode</span>
+        <span class="step-desc">Hide columns &amp; practice recall</span>
+      </div>
+      <div class="onboarding-step">
+        <span class="step-num">3</span>
+        <span class="step-label">Track Mastery</span>
+        <span class="step-desc">Mark progress with dots</span>
+      </div>
+      <div class="onboarding-step">
+        <span class="step-num">4</span>
+        <span class="step-label">Quiz Mode</span>
+        <span class="step-desc">Test yourself with random questions</span>
+      </div>
+    </div>
+    <button class="disclaimer-continue" onclick="acknowledgeDisclaimer()">Continue to the chart</button>
   </div>
 </div>
 <div class="header">
@@ -1210,7 +1363,7 @@ body.study-mode .back-to-top { bottom: 80px; }
   <button class="study-btn" id="study-toggle" onclick="handleStudyToggle()" aria-pressed="false">
     <span class="study-label">Study Mode</span>
   </button>
-  <button class="tutor-header-btn" id="header-tutor-toggle" type="button" aria-expanded="false">Tutor mode</button>
+  <button class="tutor-header-btn" id="header-tutor-toggle" type="button" aria-expanded="false">Quiz Mode</button>
   <div class="study-popover" id="study-popover">
     <div class="study-popover-title">Hide columns for recall</div>
     <label><input type="radio" name="sc" value="both" checked> Hide Management + Pearl</label>
@@ -1220,6 +1373,7 @@ body.study-mode .back-to-top { bottom: 80px; }
   </div>
   <button class="edit-btn" id="edit-toggle" onclick="toggleEditMode()">Edit Mode</button>
   <button class="export-btn" onclick="exportHTML()">Export File</button>
+  <button class="help-btn" id="help-toggle" type="button" title="Keyboard shortcuts" aria-label="Help and keyboard shortcuts">?</button>
 </div>
 <div class="edit-banner">Edit mode — click any cell to edit text · Row controls appear in the Finding column · Changes auto-save to your browser · Use Export File to bake edits into a new HTML file</div>
 <div class="study-banner">Study Mode — click any blurred cell to reveal · Use the bar below to navigate findings · Press Esc to exit</div>
@@ -1228,7 +1382,7 @@ body.study-mode .back-to-top { bottom: 80px; }
     <div class="tutor-panel" id="tutor-panel" data-open="false">
     <div class="tutor-panel-header">
       <div>
-        <h2>Tutor Coach</h2>
+        <h2>Quiz Coach</h2>
         <p>Challenge yourself with chart-based questions and reveal the answers when you are ready.</p>
       </div>
       <div class="tutor-panel-actions">
@@ -1236,7 +1390,7 @@ body.study-mode .back-to-top { bottom: 80px; }
           <span>Mode</span>
           <span class="tutor-status-pill ready" id="tutor-mode-pill">Active</span>
         </div>
-        <button id="tutor-panel-close" class="tutor-panel-close" type="button">Hide tutor</button>
+        <button id="tutor-panel-close" class="tutor-panel-close" type="button">Hide quiz</button>
       </div>
     </div>
     <div class="tutor-panel-grid">
@@ -2524,11 +2678,34 @@ function renderStudyBar() {
   document.getElementById('sb-next').disabled = studyIndex >= total - 1 || total === 0;
 }
 
-// Escape key exits study mode
+// Keyboard shortcuts
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && studyMode) exitStudyMode();
+  const tag = e.target.tagName;
+  const editable = e.target.isContentEditable;
+  const isInput = tag === 'INPUT' || tag === 'TEXTAREA' || editable;
+
+  // Escape: exit study mode or close help overlay
+  if (e.key === 'Escape') {
+    if (document.getElementById('help-overlay')?.classList.contains('open')) {
+      document.getElementById('help-overlay').classList.remove('open');
+    } else if (studyMode) {
+      exitStudyMode();
+    }
+  }
   if (e.key === 'ArrowRight' && studyMode) { e.preventDefault(); studyNav(1); }
   if (e.key === 'ArrowLeft'  && studyMode) { e.preventDefault(); studyNav(-1); }
+
+  // Only handle these when not typing in a field
+  if (!isInput) {
+    if (e.key === '/') {
+      e.preventDefault();
+      document.getElementById('search')?.focus();
+    }
+    if (e.key === '?') {
+      e.preventDefault();
+      document.getElementById('help-overlay')?.classList.toggle('open');
+    }
+  }
 });
 
 // restore study column pref
@@ -2750,7 +2927,7 @@ function setTutorFeedback(text, opts = {}) {
 
 function revealTutorAnswer() {
   if (!tutorState.row) {
-    setTutorFeedback('Generate a question first.', { label: 'Tutor coach' });
+    setTutorFeedback('Generate a question first.', { label: 'Quiz coach' });
     return;
   }
   updateTutorAnswerPanel(tutorState.row, true);
@@ -2787,7 +2964,7 @@ function setTutorPanelOpen(open) {
   if (panel) panel.setAttribute('data-open', open ? 'true' : 'false');
   if (headerBtn) {
     headerBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-    headerBtn.textContent = open ? 'Hide Tutor mode' : 'Tutor mode';
+    headerBtn.textContent = open ? 'Hide Quiz Mode' : 'Quiz Mode';
   }
   if (modePill) {
     modePill.textContent = open ? 'Active' : 'Idle';
@@ -2854,6 +3031,16 @@ if (backToTopBtn) {
   });
 }
 
+/* ── help overlay ── */
+const helpToggle = document.getElementById('help-toggle');
+const helpOverlay = document.getElementById('help-overlay');
+if (helpToggle && helpOverlay) {
+  helpToggle.addEventListener('click', () => helpOverlay.classList.toggle('open'));
+  helpOverlay.addEventListener('click', e => {
+    if (e.target === helpOverlay || e.target.classList.contains('help-close')) helpOverlay.classList.remove('open');
+  });
+}
+
 /* ── dynamic sticky offsets ── */
 function updateStickyOffsets() {
   const header = document.querySelector('.header');
@@ -2882,6 +3069,23 @@ showDisclaimer();
   <button class="sb-close" onclick="exitStudyMode()">Exit study</button>
 </div>
 <button class="back-to-top" id="back-to-top" aria-label="Back to top" title="Back to top">↑</button>
+
+<div id="help-overlay">
+  <div class="help-card">
+    <h3>Keyboard Shortcuts</h3>
+    <div class="help-section-title">Study Mode</div>
+    <table>
+      <tr><td><kbd>Esc</kbd></td><td>Exit study mode</td></tr>
+      <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>Previous / next finding</td></tr>
+    </table>
+    <div class="help-section-title">General</div>
+    <table>
+      <tr><td><kbd>/</kbd></td><td>Focus search box</td></tr>
+      <tr><td><kbd>?</kbd></td><td>Toggle this help screen</td></tr>
+    </table>
+    <button class="help-close" type="button">Got it</button>
+  </div>
+</div>
 
 </body>
 </html>
