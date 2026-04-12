@@ -2,7 +2,7 @@
 
 [Infant Exam Study Guide](https://pedscoffee.github.io/infantexamstudy/)
 
-Educational draft. This chart is a work in progress and likely contains errors as we are just getting started. It is still in its "infancy". Use clinical judgment, verify with trusted references, and treat it as supplemental material.  The current goal is for this to serve as a proof of concept, but with community contributions this could transform overtime into a valuable resource, especially for students starting pediatrics rotations or residents studying for boards.  
+This chart is a work in progress and likely contains errors as we are just getting started. It is still in its "infancy". Use clinical judgment, verify with trusted references, and treat it as supplemental material.  The current goal is for this to serve as a proof of concept, but with community contributions this could transform overtime into a valuable resource, especially for students starting pediatrics rotations or residents studying for boards.  
 
 Please contribute! Suggestions for additions or improvements welcome on the discussions page.  
 
