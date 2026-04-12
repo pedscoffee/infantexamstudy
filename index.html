@@ -743,20 +743,21 @@ body.edit-mode .edit-banner { display: block; }
 .tutor-shell {
   margin: 10px 20px 20px;
 }
-.tutor-panel-toggle {
-  border: 1px solid rgba(99, 102, 241, 0.45);
-  background: #1f2c57;
+.tutor-header-btn {
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.12);
   color: white;
   font-family: 'IBM Plex Sans', sans-serif;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  padding: 8px 16px;
-  border-radius: 999px;
+  padding: 6px 14px;
+  border-radius: 6px;
   cursor: pointer;
   transition: background 0.15s;
+  margin-left: 4px;
 }
-.tutor-panel-toggle:hover {
-  background: #2f3c7f;
+.tutor-header-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 .tutor-panel {
   margin: 0;
@@ -959,6 +960,22 @@ body.edit-mode .edit-banner { display: block; }
   gap: 6px;
   align-items: center;
 }
+.tutor-filter-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 6px;
+  display: block;
+}
+.tutor-mastery-options {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.tutor-mastery-options label {
+  font-size: 11px;
+  color: var(--muted);
+}
 
 </style>
 </head>
@@ -994,6 +1011,7 @@ body.edit-mode .edit-banner { display: block; }
   <button class="study-btn" id="study-toggle" onclick="handleStudyToggle()" aria-pressed="false">
     <span class="study-label">Study Mode</span>
   </button>
+  <button class="tutor-header-btn" id="header-tutor-toggle" type="button" aria-expanded="false">Tutor mode</button>
   <div class="study-popover" id="study-popover">
     <div class="study-popover-title">Hide columns for recall</div>
     <label><input type="radio" name="sc" value="both" checked> Hide Management + Pearl</label>
@@ -1007,9 +1025,8 @@ body.edit-mode .edit-banner { display: block; }
 <div class="edit-banner">Edit mode — click any cell to edit text · Row controls appear in the Finding column · Changes auto-save to your browser · Use Export File to bake edits into a new HTML file</div>
 <div class="study-banner">Study Mode — click any blurred cell to reveal · Use the bar below to navigate findings · Press Esc to exit</div>
 
-<div class="tutor-shell">
-  <button id="tutor-panel-toggle" class="tutor-panel-toggle" aria-expanded="false">Show Tutor mode</button>
-  <div class="tutor-panel" id="tutor-panel" data-open="false">
+  <div class="tutor-shell">
+    <div class="tutor-panel" id="tutor-panel" data-open="false">
     <div class="tutor-panel-header">
       <div>
         <h2>Tutor Coach</h2>
@@ -1054,6 +1071,14 @@ body.edit-mode .edit-banner { display: block; }
         <div class="tutor-resource">
           <strong>Resources &amp; references:</strong>
           <ul id="tutor-links"></ul>
+        </div>
+        <div class="tutor-config-row">
+          <span class="tutor-filter-label">Mastery filters</span>
+          <div class="tutor-mastery-options">
+            <label><input type="checkbox" id="tutor-filter-notstarted" /> Not started</label>
+            <label><input type="checkbox" id="tutor-filter-reviewing" /> Reviewing</label>
+            <label><input type="checkbox" id="tutor-filter-learned" /> Learned</label>
+          </div>
         </div>
         <div class="tutor-config-row">
           <label>
@@ -2340,6 +2365,8 @@ document.querySelectorAll('.nav a').forEach(link => {
 
 /* ── Tutor coach (quiz-only) ── */
 const TUTOR_CRITICAL_KEY = DATA_ID + '_tutor_critical';
+const TUTOR_MASTERY_KEY = DATA_ID + '_tutor_mastery_filter';
+const TUTOR_MASTER_STATES = ['notStarted', 'reviewing', 'learned'];
 const TUTOR_GLOBAL_RESOURCES = [
   { label: 'AAP Newborn Physical Exam overview', url: 'https://www.aap.org/en/patient-care/newborn-physical-examination/' },
   { label: 'StatPearls – Newborn exam pearls', url: 'https://www.ncbi.nlm.nih.gov/books/NBK537163/' }
@@ -2363,13 +2390,19 @@ const TUTOR_TEMPLATES = [
 ];
 
 let tutorSettings = { criticalOnly: false };
+let tutorMasteryFilter = { notStarted: true, reviewing: true, learned: true };
 let tutorState = { row: null };
 let tutorPanelOpen = false;
 
 function loadTutorSettings() {
   try {
-    const stored = localStorage.getItem(TUTOR_CRITICAL_KEY);
-    tutorSettings.criticalOnly = stored === 'true';
+    const storedCritical = localStorage.getItem(TUTOR_CRITICAL_KEY);
+    if (storedCritical) tutorSettings.criticalOnly = storedCritical === 'true';
+    const storedMastery = localStorage.getItem(TUTOR_MASTERY_KEY);
+    if (storedMastery) {
+      const parsed = JSON.parse(storedMastery);
+      tutorMasteryFilter = { ...tutorMasteryFilter, ...parsed };
+    }
   } catch (err) {
     console.warn('Could not load tutor settings', err);
   }
@@ -2378,6 +2411,7 @@ function loadTutorSettings() {
 function saveTutorSettings() {
   try {
     localStorage.setItem(TUTOR_CRITICAL_KEY, tutorSettings.criticalOnly ? 'true' : 'false');
+    localStorage.setItem(TUTOR_MASTERY_KEY, JSON.stringify(tutorMasteryFilter));
   } catch (err) {
     console.warn('Could not save tutor settings', err);
   }
@@ -2410,11 +2444,20 @@ function buildTutorPool() {
   }).filter(row => row.finding);
 }
 
+function rowMatchesMastery(row, masteryData) {
+  const state = masteryData[row.uid] ?? 0;
+  const label = TUTOR_MASTER_STATES[state] || TUTOR_MASTER_STATES[0];
+  return tutorMasteryFilter[label];
+}
+
 function pickTutorRow() {
   const pool = buildTutorPool();
   const filtered = tutorSettings.criticalOnly ? pool.filter(row => row.crit) : pool;
   if (filtered.length === 0) return null;
-  return filtered[Math.floor(Math.random() * filtered.length)];
+  const masteryData = loadMastery();
+  const masteryFiltered = filtered.filter(row => rowMatchesMastery(row, masteryData));
+  if (masteryFiltered.length === 0) return null;
+  return masteryFiltered[Math.floor(Math.random() * masteryFiltered.length)];
 }
 
 function updateTutorAnswerPanel(row, visible) {
@@ -2497,9 +2540,9 @@ function newTutorQuestion() {
   const row = pickTutorRow();
   if (!row) {
     const textEl = document.getElementById('tutor-question-text');
-    if (textEl) textEl.textContent = 'No findings match the current filter.';
+    if (textEl) textEl.textContent = 'No findings match the current filters.';
     document.getElementById('tutor-question-source').textContent = '';
-    setTutorFeedback('Adjust your priority filter or refresh the chart.', { label: 'Tutor coach' });
+    setTutorFeedback('Check your mastery/mode filters or refresh the chart.', { label: 'Tutor coach' });
     updateTutorAnswerPanel(null, false);
     return;
   }
@@ -2518,23 +2561,46 @@ function newTutorQuestion() {
 function setTutorPanelOpen(open) {
   tutorPanelOpen = open;
   const panel = document.getElementById('tutor-panel');
-  const toggle = document.getElementById('tutor-panel-toggle');
+  const headerBtn = document.getElementById('header-tutor-toggle');
+  const modePill = document.getElementById('tutor-mode-pill');
   if (panel) panel.setAttribute('data-open', open ? 'true' : 'false');
-  if (toggle) {
-    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    toggle.textContent = open ? 'Hide Tutor mode' : 'Show Tutor mode';
+  if (headerBtn) {
+    headerBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    headerBtn.textContent = open ? 'Hide Tutor mode' : 'Tutor mode';
+  }
+  if (modePill) {
+    modePill.textContent = open ? 'Active' : 'Idle';
+    modePill.classList.toggle('ready', open);
   }
   if (open && !tutorState.row) {
     newTutorQuestion();
   }
 }
 
+function initMasteryFilterControls() {
+  const filters = [
+    { id: 'tutor-filter-notstarted', key: 'notStarted' },
+    { id: 'tutor-filter-reviewing', key: 'reviewing' },
+    { id: 'tutor-filter-learned', key: 'learned' }
+  ];
+  filters.forEach(({ id, key }) => {
+    const input = document.getElementById(id);
+    if (!input) return;
+    input.checked = tutorMasteryFilter[key];
+    input.addEventListener('change', e => {
+      tutorMasteryFilter[key] = e.target.checked;
+      saveTutorSettings();
+      if (tutorPanelOpen) newTutorQuestion();
+    });
+  });
+}
+
 loadTutorSettings();
-const toggleBtn = document.getElementById('tutor-panel-toggle');
+const headerToggle = document.getElementById('header-tutor-toggle');
 const closeBtn = document.getElementById('tutor-panel-close');
 const criticalOnlyCheck = document.getElementById('tutor-critical-only');
-if (toggleBtn) {
-  toggleBtn.addEventListener('click', () => setTutorPanelOpen(!tutorPanelOpen));
+if (headerToggle) {
+  headerToggle.addEventListener('click', () => setTutorPanelOpen(!tutorPanelOpen));
 }
 if (closeBtn) {
   closeBtn.addEventListener('click', () => setTutorPanelOpen(false));
@@ -2544,11 +2610,10 @@ if (criticalOnlyCheck) {
   criticalOnlyCheck.addEventListener('change', e => {
     tutorSettings.criticalOnly = e.target.checked;
     saveTutorSettings();
-    if (tutorPanelOpen) {
-      newTutorQuestion();
-    }
+    if (tutorPanelOpen) newTutorQuestion();
   });
 }
+initMasteryFilterControls();
 
 document.getElementById('tutor-new-question')?.addEventListener('click', () => {
   if (!tutorPanelOpen) setTutorPanelOpen(true);

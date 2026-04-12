@@ -23,8 +23,8 @@ This single-page chart is a searchable, editable quick reference for the newborn
 - Inline reveal buttons now add a `cell-revealed` class so only the clicked cell is unblurred; the row class still tracks whether anything has been revealed for quick-mark controls.
 
 ## Tutor mode
-The tutor panel is hidden by default. Click **Show Tutor mode** to expand the coach, which immediately asks a random chart row question; use **Hide Tutor** if you want to collapse the panel again.
-1. Hit **New question** (the first time you open the panel it auto-populates) to pick a random finding; the related section, normal baseline, and resource links show up on the right.
-2. When you are ready, press **Reveal answer** to unblur the Management and Board Pearl cells for that row; the row also gets highlighted in the table.
-3. Use the **“Ask about high-priority rows only”** checkbox to focus on critical findings before re-queuing a question.
+The tutor panel is hidden by default. Click the **Tutor mode** button next to Study Mode to open the coach; the button text switches to **Hide Tutor mode** while the panel is visible.
+1. Hit **New question** (the panel auto-populates the first time it opens) to pull a random finding; the related section, normal baseline, and resource links appear in the context column.
+2. When ready, press **Reveal answer** to unblur the Management and Board Pearl cells for that row; the row is highlighted so you can see where it lives in the chart.
+3. Use the **“Ask about high-priority rows only”** toggle and the mastery filters (Not started / Reviewing / Learned) to focus questions based on the dot you marked for each row. The filter selections persist in local storage.
 4. Reload the page if you make edits to the chart; the tutor panel will automatically read the updated rows and keep working within the chart as the single source of truth.
