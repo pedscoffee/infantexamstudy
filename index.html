@@ -998,6 +998,46 @@ body.edit-mode .edit-banner { display: block; }
   font-size: 11px;
   color: var(--muted);
 }
+@media (max-width: 960px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .study-btn,
+  .tutor-header-btn,
+  .edit-btn,
+  .export-btn {
+    flex: none;
+    width: 100%;
+    text-align: center;
+  }
+  .legend {
+    flex-wrap: wrap;
+  }
+  .tutor-panel-grid {
+    flex-direction: column;
+  }
+  .tutor-card {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .tutor-panel {
+    padding: 12px 14px;
+  }
+  .tutor-action-btn {
+    padding: 12px;
+    min-width: 120px;
+  }
+  .tutor-card-title {
+    font-size: 13px;
+  }
+  .tutor-background,
+  .tutor-resource {
+    font-size: 11px;
+  }
+}
 
 </style>
 </head>
