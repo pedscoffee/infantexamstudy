@@ -3032,14 +3032,14 @@ if (backToTopBtn) {
 }
 
 /* ── help overlay ── */
-const helpToggle = document.getElementById('help-toggle');
-const helpOverlay = document.getElementById('help-overlay');
-if (helpToggle && helpOverlay) {
-  helpToggle.addEventListener('click', () => helpOverlay.classList.toggle('open'));
-  helpOverlay.addEventListener('click', e => {
-    if (e.target === helpOverlay || e.target.classList.contains('help-close')) helpOverlay.classList.remove('open');
-  });
-}
+document.addEventListener('click', e => {
+  if (e.target.closest('#help-toggle')) {
+    document.getElementById('help-overlay')?.classList.toggle('open');
+  }
+  if (e.target.closest('.help-close') || (e.target.id === 'help-overlay')) {
+    document.getElementById('help-overlay')?.classList.remove('open');
+  }
+});
 
 /* ── dynamic sticky offsets ── */
 function updateStickyOffsets() {
