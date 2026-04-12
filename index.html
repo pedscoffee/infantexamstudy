@@ -862,11 +862,33 @@ body.edit-mode .edit-banner { display: block; }
   color: var(--muted);
   margin-bottom: 10px;
 }
-.tutor-button-row {
+.tutor-action-row {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 12px;
+  margin: 12px 0 8px;
+}
+.tutor-action-btn {
+  flex: 1;
+  min-width: 140px;
+  border: none;
+  border-radius: 24px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.tutor-action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.4);
+}
+.tutor-action-btn.secondary {
+  background: linear-gradient(135deg, #ec4899, #db2777);
+  box-shadow: 0 10px 20px rgba(220, 38, 125, 0.35);
 }
 .tutor-answer {
   border: 1px solid rgba(15, 45, 74, 0.08);
@@ -1052,11 +1074,11 @@ body.edit-mode .edit-banner { display: block; }
             <p><strong>Board pearl:</strong> <span id="tutor-answer-pearl">–</span></p>
           </div>
         </div>
+        <div class="tutor-action-row">
+          <button class="tutor-action-btn" id="tutor-new-question" type="button">Next question</button>
+          <button class="tutor-action-btn secondary" id="tutor-reveal-answer" type="button">Reveal answer</button>
+        </div>
         <div class="tutor-feedback" id="tutor-feedback">
-          <div class="tutor-button-row">
-            <button class="sb-btn" id="tutor-new-question" type="button">Next question</button>
-            <button class="sb-btn" id="tutor-reveal-answer" type="button">Reveal answer</button>
-          </div>
           <span class="tutor-feedback-label">Status</span>
           <p id="tutor-feedback-text">Use the buttons above to advance quizzes and reveal the chart answer.</p>
         </div>
