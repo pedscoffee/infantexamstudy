@@ -1010,19 +1010,27 @@ body.edit-mode .edit-banner { display: block; }
 }
 @media (max-width: 960px) {
   .header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .study-btn,
-  .tutor-header-btn,
-  .edit-btn,
-  .export-btn {
-    flex: none;
-    width: 100%;
-    text-align: center;
-  }
-  .legend {
     flex-wrap: wrap;
+    position: relative; /* Un-stick on mobile so it doesn't consume screen space */
+    padding-bottom: 16px;
+  }
+  .nav {
+    top: 0; 
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding: 10px 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .header-title, .search-box, .legend {
+    width: 100%;
+    flex: none;
+  }
+  /* Show buttons nicely */
+  .study-btn, .tutor-header-btn, .edit-btn, .export-btn {
+    width: calc(50% - 8px);
+    justify-content: center;
   }
   .tutor-panel-grid {
     flex-direction: column;
@@ -1032,48 +1040,75 @@ body.edit-mode .edit-banner { display: block; }
   }
 }
 
+@media (max-width: 768px) {
+  /* Convert Table to Cards */
+  table, thead, tbody, th, td, tr {
+    display: block;
+    width: 100% !important;
+  }
+  thead { display: none; }
+  tr.data-row {
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  }
+  tr.critical.data-row {
+    border-color: var(--red-border);
+  }
+  td {
+    border-bottom: 1px solid #edf0f4;
+    padding: 14px 16px;
+    min-height: auto !important;
+  }
+  td:last-child { border-bottom: none; }
+  td.pearl-cell { 
+    border-left: none; 
+    border-left: 5px solid var(--gold-border); 
+  }
+  
+  /* Labels for Mobile Cards */
+  td.mgmt-cell::before {
+    content: "MANAGEMENT / NEXT STEPS";
+    display: block; font-size: 10px; color: var(--navy); font-weight: 700;
+    margin-bottom: 6px; letter-spacing: 0.5px; opacity: 0.8;
+  }
+  td.pearl-cell::before {
+    content: "BOARD PEARL";
+    display: block; font-size: 10px; color: #a47008; font-weight: 700;
+    margin-bottom: 6px; letter-spacing: 0.5px; opacity: 0.9;
+  }
+  td.img-col::before {
+    content: "IMAGE REFERENCE";
+    display: block; font-size: 10px; color: var(--navy); font-weight: 700;
+    margin-bottom: 6px; letter-spacing: 0.5px; opacity: 0.8;
+  }
+  .img-links a { max-width: none; white-space: normal; display: inline-block; margin-right: 12px; margin-bottom: 4px; }
+  
+  /* Refine Floating Elements */
+  #study-bar { width: 90%; flex-wrap: wrap; bottom: 12px; }
+  .back-to-top { bottom: 12px; right: 12px; }
+  body.study-mode .back-to-top { bottom: 90px; }
+}
+
 @media (max-width: 640px) {
-  .tutor-panel {
-    padding: 12px 14px;
-  }
-  .tutor-action-btn {
-    padding: 12px;
-    min-width: 120px;
-  }
-  .tutor-card-title {
-    font-size: 13px;
-  }
-  .tutor-background,
-  .tutor-resource {
-    font-size: 11px;
-  }
+  .tutor-panel { padding: 12px 14px; }
+  .tutor-action-btn { padding: 12px; min-width: 120px; }
+  .tutor-card-title { font-size: 13px; }
+  .tutor-background, .tutor-resource { font-size: 11px; }
+  body { font-size: 14px; }
+  .section-header { flex-direction: column; align-items: flex-start; gap: 4px; }
 }
 
 @media (max-width: 480px) {
-  body {
-    font-size: 14px;
-  }
-  .header {
-    gap: 10px;
-  }
-  .tutor-panel-grid {
-    gap: 12px;
-  }
-  .tutor-card {
-    border-radius: 16px;
-    padding: 14px;
-  }
-  .tutor-action-row {
-    flex-direction: column;
-  }
-  .tutor-action-btn {
-    min-width: auto;
-    width: 100%;
-  }
-  .tutor-background,
-  .tutor-resource {
-    padding: 8px 0;
-  }
+  .header { gap: 10px; }
+  .tutor-panel-grid { gap: 12px; }
+  .tutor-card { border-radius: 16px; padding: 14px; }
+  .tutor-action-row { flex-direction: column; }
+  .tutor-action-btn { min-width: auto; width: 100%; }
+  .tutor-background, .tutor-resource { padding: 8px 0; }
+  .study-btn, .tutor-header-btn, .edit-btn, .export-btn { width: 100%; }
 }
 
 /* ─── ACCESSIBILITY ─────────────────────────────────── */
