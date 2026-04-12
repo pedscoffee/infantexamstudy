@@ -3,9 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Searchable newborn physical exam quick reference chart with study mode, mastery tracking, and tutor coach for pediatrics students and residents.">
+<meta name="keywords" content="newborn exam, pediatrics, board review, physical exam, neonatal, study guide">
+<meta name="author" content="PedsCoffee">
+<meta property="og:title" content="Newborn Physical Exam — Quick Reference">
+<meta property="og:description" content="A searchable study chart for the newborn physical exam with board pearls, management steps, and a built-in tutor coach.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://pedscoffee.github.io/infantexamstudy/">
+<link rel="canonical" href="https://pedscoffee.github.io/infantexamstudy/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👶</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <title>Newborn Exam — Quick Reference</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
 
 :root {
   --navy: #0f2d4a;
@@ -28,7 +39,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'IBM Plex Sans', sans-serif;
+  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: var(--bg);
   color: var(--text);
   font-size: 13px;
@@ -156,7 +167,7 @@ body {
   gap: 2px;
   flex-wrap: wrap;
   position: sticky;
-  top: 67px;
+  top: var(--header-h, 67px);
   z-index: 199;
   border-bottom: 1px solid rgba(255,255,255,0.07);
 }
@@ -1065,11 +1076,75 @@ body.edit-mode .edit-banner { display: block; }
   }
 }
 
+/* ─── ACCESSIBILITY ─────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ─── BACK TO TOP ──────────────────────────────────── */
+.back-to-top {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: white;
+  border: 2px solid rgba(255,255,255,0.2);
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s, transform 0.15s;
+  z-index: 300;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.back-to-top.visible { opacity: 1; visibility: visible; }
+.back-to-top:hover { transform: translateY(-2px); background: var(--navy-mid); }
+body.study-mode .back-to-top { bottom: 80px; }
+
+/* ─── MOBILE TABLE SCROLL ──────────────────────────── */
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ─── PRINT ────────────────────────────────────────── */
+@media print {
+  .header, .nav, #progress-strip, #study-bar, .back-to-top,
+  .tutor-shell, .edit-banner, .study-banner, .row-controls,
+  .add-row-wrap, .mastery-dot, .quick-mark, .reveal-ph,
+  .mf-pills, .progress-reset, #disclaimer-overlay,
+  .study-btn, .edit-btn, .export-btn, .tutor-header-btn,
+  .save-indicator, .study-popover { display: none !important; }
+  body { font-size: 11px; background: white; color: black; }
+  .content { max-width: 100%; padding: 10px; }
+  .section { page-break-inside: avoid; margin-bottom: 12px; }
+  table { page-break-inside: auto; border: 1px solid #333; }
+  tr { page-break-inside: avoid; }
+  thead th { background: #eee !important; color: #333 !important; }
+  td.pearl-cell { background: #fffcf0 !important; border-left-color: #ccc !important; }
+  .cell-text { display: block !important; }
+  .footer { border-top: 1px solid #ccc; font-size: 9px; }
+}
+
 </style>
 </head>
 <body>
 
-<div id="disclaimer-overlay">
+<div id="disclaimer-overlay" role="dialog" aria-modal="true" aria-label="Educational disclaimer">
   <div class="disclaimer-card">
     <p><strong>Educational draft.</strong> This chart is a work in progress and likely contains errors as we are just getting started. It is still in its "infancy". Use clinical judgment, verify with trusted references, and treat it as supplemental material.</p>
     <p>Please contribute!  Suggestions for additions or improvements welcome: <a href="https://github.com/pedscoffee/infantexamstudy/discussions/1" target="_blank" rel="noopener">the discussions page</a>.</p>
@@ -1088,6 +1163,7 @@ body.edit-mode .edit-banner { display: block; }
         <line x1="16.5" y1="16.5" x2="21" y2="21" />
       </svg>
     </span>
+    <label for="search" class="sr-only">Search findings</label>
     <input id="search" type="text" placeholder="Search findings, mnemonics, diagnoses..." autocomplete="off" spellcheck="false" />
   </div>
   <div class="legend">
@@ -1219,7 +1295,7 @@ body.edit-mode .edit-banner { display: block; }
 <div id="no-results">No findings match your search. Try a different keyword.</div>
 </div>
 
-<div class="footer">For educational use only. Always apply clinical judgment and current institutional protocols. · Newborn Physical Exam Teaching Chart</div>
+<div class="footer">For educational use only. Always apply clinical judgment and current institutional protocols. · Newborn Physical Exam Teaching Chart · Last updated April 2026 · <a href="https://github.com/pedscoffee/infantexamstudy" target="_blank" rel="noopener" style="color:var(--muted);text-decoration:underline;">GitHub</a></div>
 
 <script>
 const SECTIONS = [
@@ -1264,8 +1340,8 @@ const SECTIONS = [
         pearl: "Punched-out scalp lesion missing skin. Strongly associated with Trisomy 13 (Patau) and maternal methimazole use.",
         imgs: [] },
       { finding: "Bulging fontanelle", crit: false,
-        mgmt: "All about context, consider head US, be sure to examine infant supine and held sitting up",
-        pearl: "Consider entire neuro exam together —",
+        mgmt: "Assess in context: examine infant supine and held upright while calm. Consider head US to evaluate for hydrocephalus. Measure head circumference serially. Neurosurgery consult if hydrocephalus suspected.",
+        pearl: "Isolated transient bulging (e.g., during crying or straining) can be normal. Pathologic when tense and full while upright and calm, accompanied by irritability, vomiting, lethargy, or increasing head circumference. Always consider the entire neuro exam together.",
         imgs: [] },
       { finding: "Sunken fontanelle", crit: false,
         mgmt: "Assess hydration and feeding. Check weight vs. birth weight. If >10% weight loss or hypernatremia → IV fluids, lactation consult.",
@@ -1327,8 +1403,8 @@ const SECTIONS = [
         pearl: "Wilms tumor + Aniridia + GU anomalies + Range of delays = WAGR syndrome. Wilms tumor risk ~50%",
         imgs: [] },
       { finding: "Setting-sun sign", crit: false,
-        mgmt: "Head US, NSGY",
-        pearl: "Hydrocephalus",
+        mgmt: "Head ultrasound urgently to evaluate for hydrocephalus. Measure head circumference and compare to growth curve. Neurosurgery consult if hydrocephalus confirmed. Evaluate for other signs of increased ICP.",
+        pearl: "Downward deviation of eyes with visible sclera above iris. Classic sign of increased intracranial pressure and hydrocephalus in infants. Parinaud syndrome involves similar downward gaze palsy from dorsal midbrain compression.",
         imgs: [] },
       { finding: "Brushfield spots", crit: false,
         mgmt: "Karyotype, echocardiogram, thyroid screen, CBC, ophthalmology, audiology.",
@@ -1455,7 +1531,7 @@ const SECTIONS = [
         imgs: [{ label: "Radiology Assistant (neonatal CXR guide)", url: "https://radiologyassistant.nl/pediatrics/pediatric-chest-ct/neonatal-chest" }] },
       { finding: "Transient tachypnea of newborn (TTN)", crit: false,
         mgmt: "Supplemental O₂, supportive care, monitor. Resolves in 24–72 hours.",
-        pearl: "Common",
+        pearl: "Most common cause of respiratory distress in term neonates. Risk factors: C-section delivery (no thoracic squeeze), maternal diabetes. CXR: hyperinflated lungs, perihilar streaking, fluid in fissures. Self-limited.",
         imgs: [{ label: "Radiology Assistant (neonatal CXR guide)", url: "https://radiologyassistant.nl/pediatrics/pediatric-chest-ct/neonatal-chest" }] },
       { finding: "Congenital diaphragmatic hernia (CDH)", crit: true,
         mgmt: "Often intubate immediately — NG tube for decompression. Stabilize before surgical repair.",
@@ -1531,9 +1607,9 @@ const SECTIONS = [
         mgmt: "Fecal/intestinal drainage from umbilicus. Surgical referral. Evaluate for associated Meckel's diverticulum.",
         pearl: "Rule of 2s for Meckel's: 2% of population, 2% are symptomatic, 2 inches long, 2 feet from ileocecal valve, presents in first 2 years, 2 types of ectopic tissue (gastric + pancreatic)",
         imgs: [] },
-      { finding: "Omphalitis", crit: false,
-        mgmt: "Broad spectrum antibiotics and full work up",
-        pearl: "True emergency",
+      { finding: "Omphalitis", crit: true,
+        mgmt: "Broad-spectrum IV antibiotics (ampicillin + gentamicin). Blood cultures. Surgical consult if periumbilical crepitus, necrosis, or fascial involvement suspected.",
+        pearl: "Erythema, warmth, and purulent discharge from the umbilical stump. Can progress rapidly to necrotizing fasciitis, peritonitis, or portal vein thrombosis. A true neonatal emergency — delayed treatment carries significant mortality.",
         imgs: [] },
       { finding: "Omphalocele", crit: true,
         mgmt: "Cover with moist sterile dressing + plastic wrap. Surgical repair timing depends on size. Genetics consult.",
@@ -1545,7 +1621,7 @@ const SECTIONS = [
         imgs: [{ label: "StatPearls (gastroschisis)", url: "https://www.ncbi.nlm.nih.gov/books/NBK557894/" }] },
       { finding: "Umbilical hernia", crit: false,
         mgmt: "Observe. Most close by age 2–4 years. Refer surgery if persists past 4–5 yrs, or symptomatic.",
-        pearl: "Reassurance is something that could be tested",
+        pearl: "Very common, especially in African American infants and in Beckwith-Wiedemann syndrome. Most close spontaneously by age 4. Rarely incarcerates (unlike inguinal hernias). No taping or coin pressure — folk remedies can cause skin breakdown.",
         imgs: [] },
       { finding: "No meconium by 48 hours", crit: true,
         mgmt: "Rectal exam (may release plug), KUB, contrast enema, rectal biopsy if Hirschsprung suspected",
@@ -1702,8 +1778,8 @@ const SECTIONS = [
     normal: "Pink and well-perfused after transition · mild vernix/lanugo acceptable · acrocyanosis (hands/feet) common in first hours — benign",
     rows: [
       { finding: "Physiologic jaundice", crit: false,
-        mgmt: "Follow the guideline",
-        pearl: "Appears day 2–3, peaks day 4–5, resolves gradually",
+        mgmt: "Plot total serum bilirubin on the Bhutani nomogram (AAP hour-specific chart). Phototherapy if above treatment threshold for age in hours. Ensure adequate feeding and hydration.",
+        pearl: "Appears day 2–3, peaks day 3–5, resolves by 1–2 weeks. Due to physiologic immaturity of hepatic conjugation + increased RBC turnover. Always consider pathologic causes if onset <24 h, rising rapidly, or prolonged >2 weeks.",
         imgs: [] },
       { finding: "Jaundice <24 hours", crit: true,
         mgmt: "STAT total + direct bilirubin. Blood type, DAT (Coombs). CBC for hemolysis. IVIG if rising rapidly despite phototherapy. Exchange transfusion if extreme levels.",
@@ -1829,7 +1905,6 @@ const revealIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
   <circle cx="12" cy="12" r="3" />
 </svg>`;
 
-let rowCounter = 0; // unique id for each rendered row
 
 function buildRow(sid, rid, r) {
   const uid = `${sid}:${rid}`;
@@ -1846,7 +1921,7 @@ function buildRow(sid, rid, r) {
         <button class="row-btn crit-btn ${isCrit?'on':''}" title="Toggle high priority" onclick="toggleCrit(this)">${isCrit?'Critical':'Normal'}</button>
       </div>
       <div style="display:flex;align-items:flex-start;gap:2px;margin-bottom:3px;">
-        <button class="mastery-dot" data-m="${mState}" data-uid="${uid}" title="${mTitles[mState]}" onclick="cycleMastery('${uid}')">${mLabels[mState]}</button>
+        <button class="mastery-dot" data-m="${mState}" data-uid="${uid}" title="${mTitles[mState]}" aria-label="${mTitles[mState]}" onclick="cycleMastery('${uid}')">${mLabels[mState]}</button>
         <div style="flex:1">
           <div class="badge-wrap">${badge}</div>
           <span class="finding-name" data-cell="finding" contenteditable="false" spellcheck="false">${r.finding}</span>
@@ -1884,7 +1959,7 @@ function buildTable(section) {
       <span class="section-title">${section.title}</span>
       <span class="section-normal" data-editable="${section.id}" contenteditable="false" spellcheck="false">Normal: ${section.normal}</span>
     </div>
-    <table>
+    <div class="table-wrap"><table>
       <thead>
         <tr>
           <th class="finding-col">Finding</th>
@@ -1894,7 +1969,7 @@ function buildTable(section) {
         </tr>
       </thead>
       <tbody>${rows}</tbody>
-    </table>
+    </table></div>
     <div class="add-row-wrap">
       <button class="add-row-btn" onclick="addRow('${section.id}')">+ Add row to ${section.title}</button>
     </div>
@@ -1919,10 +1994,10 @@ function applyEdits() {
       if (!row) return;
       if (cell === 'finding') {
         const el = row.querySelector('.finding-name');
-        if (el) el.innerHTML = html;
+        if (el) el.innerHTML = sanitizeHTML(html);
       } else {
         const el = row.querySelector(`td[data-cell="${cell}"]`);
-        if (el) el.innerHTML = html;
+        if (el) el.innerHTML = sanitizeHTML(html);
       }
     });
   }
@@ -1985,6 +2060,21 @@ function toggleEditMode() {
   });
 }
 
+/* ── HTML sanitizer ── */
+function sanitizeHTML(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  tmp.querySelectorAll('script, style, iframe, object, embed, form').forEach(el => el.remove());
+  tmp.querySelectorAll('*').forEach(el => {
+    [...el.attributes].forEach(attr => {
+      if (attr.name.startsWith('on') || (attr.name === 'href' && attr.value.trim().toLowerCase().startsWith('javascript:'))) {
+        el.removeAttribute(attr.name);
+      }
+    });
+  });
+  return tmp.innerHTML;
+}
+
 /* ── save cell edits on input ── */
 let saveTimer;
 document.getElementById('main-content').addEventListener('input', e => {
@@ -2000,7 +2090,7 @@ document.getElementById('main-content').addEventListener('input', e => {
     saveTimer = setTimeout(() => {
       const edits = loadEdits();
       if (!edits.cells) edits.cells = {};
-      edits.cells[`${uid}||${cell}`] = target.innerHTML;
+      edits.cells[`${uid}||${cell}`] = sanitizeHTML(target.innerHTML);
       // update search data-text
       updateRowSearchText(row);
       saveEdits(edits);
@@ -2109,7 +2199,14 @@ function addRow(sid) {
       el.contentEditable = 'true';
     });
     const fn = newTr.querySelector('.finding-name');
-    if (fn) { fn.focus(); document.execCommand('selectAll', false, null); }
+    if (fn) {
+      fn.focus();
+      const range = document.createRange();
+      range.selectNodeContents(fn);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
   }
 }
 
@@ -2194,6 +2291,7 @@ function applyDotState(dot, state) {
   dot.setAttribute('data-m', state);
   dot.textContent = labels[state];
   dot.title = titles[state];
+  dot.setAttribute('aria-label', titles[state]);
 }
 function applyLearnedDim(row, state) {
   row.classList.toggle('s-learned-dim', studyMode && skipLearned && state === 2);
@@ -2709,6 +2807,29 @@ document.getElementById('tutor-new-question')?.addEventListener('click', () => {
 });
 document.getElementById('tutor-reveal-answer')?.addEventListener('click', revealTutorAnswer);
 setTutorPanelOpen(false);
+
+/* ── back to top ── */
+const backToTopBtn = document.getElementById('back-to-top');
+if (backToTopBtn) {
+  window.addEventListener('scroll', () => {
+    backToTopBtn.classList.toggle('visible', window.scrollY > 400);
+  }, { passive: true });
+  backToTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
+/* ── dynamic sticky offsets ── */
+function updateStickyOffsets() {
+  const header = document.querySelector('.header');
+  if (header) {
+    document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
+  }
+}
+window.addEventListener('resize', updateStickyOffsets);
+window.addEventListener('load', updateStickyOffsets);
+updateStickyOffsets();
+
 showDisclaimer();
 </script>
 <div id="study-bar">
@@ -2725,6 +2846,7 @@ showDisclaimer();
   </label>
   <button class="sb-close" onclick="exitStudyMode()">Exit study</button>
 </div>
+<button class="back-to-top" id="back-to-top" aria-label="Back to top" title="Back to top">↑</button>
 
 </body>
 </html>

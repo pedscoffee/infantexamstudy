@@ -1,30 +1,57 @@
 # Infant Physical Exam Study Reference
 
-[Infant Exam Study Guide](https://pedscoffee.github.io/infantexamstudy/)
+[![GitHub Pages](https://img.shields.io/badge/demo-live-brightgreen)](https://pedscoffee.github.io/infantexamstudy/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-This chart is a work in progress and likely contains errors as we are just getting started. It is still in its "infancy". Use clinical judgment, verify with trusted references, and treat it as supplemental material.  The current goal is for this to serve as a proof of concept, but with community contributions this could transform overtime into a valuable resource, especially for students starting pediatrics rotations or residents studying for boards.  
+> **Educational draft.** This chart is a work in progress and may contain errors. It is still in its "infancy." Use clinical judgment, verify with trusted references, and treat it as supplemental material.
 
-Please contribute! Suggestions for additions or improvements welcome on the discussions page.  
+A searchable, single-page quick reference for the newborn physical exam — covering findings, management, and board pearls across 16 body systems. Designed for medical students starting pediatrics rotations and residents studying for boards.
 
-This single-page chart is a searchable, editable quick reference for the newborn physical exam. All data lives in `index.html`; styles, markup, and the data array are bundled together so you can open the file directly in a browser.
+**[Open the chart →](https://pedscoffee.github.io/infantexamstudy/)**
 
-## Key features
-- **Search, mastery, and study helpers.** Search the table, mark rows as not started/reviewing/learned, and filter by state with the pill buttons. Study mode blurs management/board pearl cells until you click their inline reveal buttons.
-- **Study mode toggle.** Click the study button in the sticky header to open the column-hiding popover; start a session to hide Management, Pearl, or both columns and reveal cells individually. Clicking the study button while already studying exits the session.
-- **In-place editing.** Toggle edit mode to modify findings, management notes, pearls, and section normals in the DOM. Changes auto-save to your browser, and the export button bakes them into a standalone HTML file with a unique localStorage namespace so stale edits no longer interfere.
+## Features
 
-## Workflow
-1. Open `index.html` in your browser (no build step required).
-2. Toggle **Edit Mode** to make text editable; edits are saved automatically and can be exported via the **Export File** button.
-3. Use **Study Mode** to practice: select which columns to hide, click the inline reveal buttons to show only the cell you care about, and use the floating bar for navigation and skipping learned rows.
+### Quick Reference Chart
+Browse findings organized by body system (Vitals, Head, Eyes, Ears, Nose, Mouth, Neck, Chest/Resp, Cardiovascular, Abdomen, GU, MSK, Spine, Skin, Neuro). Each row includes the finding name, management/next steps, board pearls, and links to image references. High-priority findings are flagged in red.
 
-## Development notes
-- Local storage now keys edits and mastery data by a `DATA_ID` constant that is rewritten on each export, preventing old exports from clobbering fresh charts.
-- Inline reveal buttons now add a `cell-revealed` class so only the clicked cell is unblurred; the row class still tracks whether anything has been revealed for quick-mark controls.
+### Search
+Instantly filter across all sections by finding name, management keywords, or pearl content.
 
-## Tutor mode
-The tutor panel is hidden by default. Click the **Tutor mode** button next to Study Mode to open the coach; the button text switches to **Hide Tutor mode** while the panel is visible.
-1. Hit **Next question** (the panel auto-populates the first time it opens) to pull a random finding; the related section, normal baseline, and resource links appear in the context column.
-2. When ready, press **Reveal answer** (located beneath the Chart answer box) to unblur the Management and Board Pearl cells for that row; the row is highlighted so you can see where it lives in the chart.
-3. Use the **“Ask about high-priority rows only”** toggle and the mastery filters (Not started / Reviewing / Learned) to focus questions based on the dot you marked for each row. The filter selections persist in local storage.
-4. Reload the page if you make edits to the chart; the tutor panel will automatically read the updated rows and keep working within the chart as the single source of truth.
+### Mastery Tracking
+Mark each finding as Not Started, Reviewing, or Learned using the mastery dots. A progress bar tracks your overall progress, and filter pills let you focus on specific mastery levels.
+
+### Study Mode
+Hide the Management and/or Board Pearl columns, then reveal them one at a time to practice active recall. Use the floating navigation bar to step through findings, shuffle the order, or skip rows you've already learned.
+
+### Tutor Mode
+A built-in quiz coach that pulls random findings and prompts you with management or pearl recall questions. Filter by mastery level or high-priority rows to focus your practice.
+
+### Edit Mode
+Modify findings, management notes, pearls, and section normals directly in the browser. Changes auto-save to localStorage. Use the Export button to bake your edits into a standalone HTML file with its own localStorage namespace.
+
+## Getting Started
+
+1. **Open the chart**: Visit the [live site](https://pedscoffee.github.io/infantexamstudy/) or open `index.html` directly in your browser — no build step or dependencies required.
+2. **Study**: Click **Study Mode** to hide columns and practice recall. Use the floating bar to navigate.
+3. **Track progress**: Click the mastery dot beside each finding to cycle through Not Started → Reviewing → Learned.
+4. **Quiz yourself**: Open **Tutor Mode** for randomized questions with chart-based answers.
+5. **Edit**: Toggle **Edit Mode** to modify content in-place. Export to save your edits into a new HTML file.
+
+## Contributing
+
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+- 💬 [Suggest improvements on the Discussions page](https://github.com/pedscoffee/infantexamstudy/discussions/1)
+- 🐛 [Report bugs via Issues](https://github.com/pedscoffee/infantexamstudy/issues)
+- 🔀 [Submit a pull request](https://github.com/pedscoffee/infantexamstudy/pulls)
+
+## Technical Notes
+
+- All data, styles, and logic live in a single `index.html` file for maximum portability.
+- Edits and mastery progress are stored in `localStorage`, keyed by a `DATA_ID` constant that changes on each export to prevent stale data conflicts.
+- No external dependencies beyond Google Fonts (with system-font fallbacks).
+- Keyboard shortcuts: `Esc` exits study mode; `←`/`→` arrows navigate between findings.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
